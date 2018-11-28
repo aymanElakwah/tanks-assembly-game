@@ -11,7 +11,11 @@ pnum db  ?          ;Player number = pnum (0 or 1)
 posx  db  ?        ;Positon x of general player
 posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
- 
+
+conf  db 16,17,30,31
+chngx db 01,-1,01,-1
+chngy db 00,00,00,00
+
 ends
 
 stack segment
