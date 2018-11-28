@@ -41,7 +41,7 @@ MovePlayer MACRO
     	mov bh,0
     	int 10h
     
-    	cmp al,0	;cmp al,' '
+    	cmp al,' '
     	jnz Drw
     
     	mov ah,2
