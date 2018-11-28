@@ -33,7 +33,7 @@ MovePlayer MACRO
 	mov dl,posx
 	add dl,bl
 	mov bl,chngy+si
-	mov dh,posy+
+	mov dh,posy
 	add dh,bl
 	int 10h
 	
@@ -63,7 +63,7 @@ MovePlayer MACRO
 	add dl,bl
 	mov bl,chngy+si
 	mov dh,posy
-	add dl,bl
+	add dh,bl
 	mov posx,dl
 	mov posy,dh
     
@@ -72,8 +72,8 @@ MovePlayer MACRO
 	
     	pop si
 	pop dx
-	pop cx
 	pop bx
+	pop cx
 	pop ax
 ENDM MovePlayer
 

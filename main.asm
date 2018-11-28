@@ -34,7 +34,7 @@ start:
 ; set segment registers:
     mov ax, data
     mov ds, ax
-    
+
     mov dx, offset message
     mov ah, 9
     int 21h
@@ -48,11 +48,11 @@ start:
     ; add your code here
     label:
     mainGameLoop
-    jmp label        
-    
-    
+    jmp label
+
+
     mov ax, 4c00h ; exit to operating system.
-    int 21h    
+    int 21h
 ends
 
 end start ; set entry point and stop the assembler.
