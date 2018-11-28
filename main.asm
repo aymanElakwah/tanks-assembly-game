@@ -1,7 +1,15 @@
 data segment
 
+player1x db ?
+player1y db ?
+player1Ori db ?
+player2x db ?
+player2y db ?
+player2Ori db ?
+
 pnum db  ?          ;Player number = pnum (0 or 1)
-pos  db  ?,?        ;Positon of player = (x: pos, y: pos+1)
+posx  db  ?        ;Positon x of general player
+posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
  
 ends
