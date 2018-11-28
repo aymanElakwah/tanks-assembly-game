@@ -1,5 +1,5 @@
 mem2mem macro index ;bx = si
-    mov dx, [si + index]
+    mov dl, [si + index]
     mov [bx + index], dl
 endm mem2mem
 
@@ -75,11 +75,13 @@ mainGameLoop macro
     mov pnum, al
     cmp al, 1
     jnz player2Check
+    mov player1Ori, ah
     mov si, offset player1
     mov bx, offset generalPlayer
     move
     jmp continue
     player2Check:
+    mov player2Ori, ah
     mov si, offset player2
     mov bx, offset generalPlayer
     move
