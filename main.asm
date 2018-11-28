@@ -1,5 +1,9 @@
 data segment
-    
+
+pnum db  ?
+pos  db  ?,? 
+ori  db  ?
+
 ends
 
 stack segment
