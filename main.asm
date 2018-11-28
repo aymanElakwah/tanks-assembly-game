@@ -1,8 +1,10 @@
 data segment
 
+player1 label byte
 player1x db ?
 player1y db ?
 player1Ori db ?
+player2 label byte
 player2x db ?
 player2y db ?
 player2Ori db ?
