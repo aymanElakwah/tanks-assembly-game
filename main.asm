@@ -1,9 +1,9 @@
 data segment
 
-pnum db  ?
-pos  db  ?,? 
-ori  db  ?
-
+pnum db  ?          ;Player number = pnum (0 or 1)
+pos  db  ?,?        ;Positon of player = (x: pos, y: pos+1)
+ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
+ 
 ends
 
 stack segment
