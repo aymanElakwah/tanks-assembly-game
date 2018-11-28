@@ -15,8 +15,8 @@ posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
 
 conf  db 16,17,30,31
-chngx db 01,-1,01,-1
-chngy db 00,00,00,00
+chngx db 01,-1,00,00
+chngy db 00,00,-1,01
 
 ends
 
