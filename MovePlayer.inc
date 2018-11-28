@@ -72,8 +72,8 @@ MovePlayer MACRO
 	
     	pop si
 	pop dx
-	pop bx
 	pop cx
+	pop bx
 	pop ax
 ENDM MovePlayer
 
