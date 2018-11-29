@@ -7,6 +7,7 @@ MovePlayer MACRO
 	push si
 	
 	mov ah,2
+	mov bx,0
 	mov dl,posx
 	mov dh,posy
 	int 10h
@@ -78,6 +79,8 @@ MovePlayer MACRO
 ENDM MovePlayer
 
 DrawPlayer MACRO
+	push si
+	push bx
 	mov ah,2
 	mov dl,posx
 	mov dh,posy
@@ -88,6 +91,8 @@ DrawPlayer MACRO
 	mov bh,0
 	mov cx,1
 	mov bl,pnum
-	inc bl
+	add bl,0DH
 	int 10h
+	pop bx
+	pop si
 ENDM DrawPlayer

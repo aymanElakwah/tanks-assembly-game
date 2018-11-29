@@ -3,13 +3,13 @@ include akwah.inc
 data segment
 
 player1 label byte
-player1x db ?
-player1y db ?
-player1Ori db ?
+player1x db 0
+player1y db 0
+player1Ori db 16
 player2 label byte
-player2x db ?
-player2y db ?
-player2Ori db ?
+player2x db 76
+player2y db 22
+player2Ori db 17
 
 pnum db  ?          ;Player number = pnum (0 or 1)
 generalPlayer label byte
@@ -21,7 +21,7 @@ conf  db 16,17,30,31
 chngx db 01,-1,00,00
 chngy db 00,00,-1,01
 
-message db 300 dup(' '), '$'
+message db 2000 dup(' '), '$'
 
 ends
 
@@ -38,13 +38,14 @@ start:
     mov dx, offset message
     mov ah, 9
     int 21h
-    mov dx, 0
-    mov ah, 2
-    int 10h
     mov pnum, 1
-    mov player1ori, 16
-    mov ori, 16
-    DrawPlayer
+    mov si, offset player1
+    mov bx, offset generalPlayer
+    draw
+    mov pnum, 2
+    mov si, offset player2
+    mov bx, offset generalPlayer
+    draw
     ; add your code here
     label:
     mainGameLoop

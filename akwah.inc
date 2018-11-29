@@ -63,6 +63,18 @@ move macro
     mem2mem 1
     mem2mem 2
     endm move
+
+draw macro
+    mem2mem 0
+    mem2mem 1
+    mem2mem 2
+    drawPlayer
+    xchg bx, si
+    mem2mem 0
+    mem2mem 1
+    mem2mem 2
+    endm draw
+
 mainGameLoop macro
     local player2Check, continue
     ; get input from user
@@ -81,6 +93,8 @@ mainGameLoop macro
     move
     jmp continue
     player2Check:
+    cmp al, 2
+    jnz continue
     mov player2Ori, ah
     mov si, offset player2
     mov bx, offset generalPlayer
