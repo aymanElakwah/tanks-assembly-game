@@ -118,10 +118,8 @@ nwpost:
 	je move
 dead:	mov bullet,0ffh
 	mov bullet+1,0ffH
+	Collide
 	jmp mend
-	;;hit wall
-	;;hit tank
-	;;hit flag
 
 move:
 	mov bullet + 1, dh
@@ -145,3 +143,95 @@ drawblt macro bullet
 	mov dl,250
 	int 21h
 endm drawblt		
+
+Collide Macro
+	LOCAL E, Update1, Update2, Destroy, Game1, Game2 
+	cmp al,178			;if (Block) destroy
+	jz destroy
+	cmp ah,0EH			;if (player1) update1 //check by position
+	jz update1
+	cmp ah,0FH			;if (player2) update2 //check by position
+	jz update2
+	cmp al,218			;if (flag1) Game1 //the first player lost
+	jz Game1
+	cmp al,217
+	jz Game2			;else flage2 Game2 //the second player lost
+	jmp E
+
+	update1:
+	mov ah,2			;destroy from its current position
+	int 10h
+	mov dl,' '
+	int 21h
+	mov cl,lives1			;check for remaining lives & decrement it
+	dec cl
+	jz Game1			;if dead, lives = 0, first player lost
+	mov lives1,cl
+	UpadateHearts 1			;redraw hearts
+	mov dl,21			;return player to respawn position
+	mov dh,0
+	mov posx,dl
+	mov posy,dh
+	mov player1x,dl
+	mov player1y,dh
+	mov dl,1
+	mov pnum,dl
+	mov dl,16
+	mov ori,dl
+	DrawPlayer
+	jmp E				
+
+	Update2:
+	mov ah,2			;destroy from its current position
+	int 10h
+	mov dl,' '
+	int 21h	
+	mov cl,lives2			;check for remaining lives & decrement it
+	dec cl
+	jz Game2			;if dead, lives = 0, second player lost
+	mov lives2,cl
+	UpadateHearts 2			;redraw hearts
+	mov dl,76			;return player to respawn position
+	mov dh,22
+	mov posx,dl
+	mov posy,dh
+	mov player2x,dl
+	mov player2y,dh
+	mov dl,2
+	mov pnum,dl
+	mov dl,17
+	mov ori,dl
+	DrawPlayer
+	jmp E			
+
+	Game1:
+	mov ah,0
+	mov al,3h
+	int 10h
+	mov ah,9 ;Display
+	mov bh,0 ;Page 0
+	mov al,'2' ;Letter D
+	mov cx,5h ;5 times
+	mov bl,0FAh ;Green (A) on white(F) background
+	int 10h
+	jmp E
+
+	Game2:
+	mov ah,0
+	mov al,3h
+	int 10h
+	mov ah,9 ;Display
+	mov bh,0 ;Page 0
+	mov al,'1' ;Letter D
+	mov cx,5h ;5 times
+	mov bl,0FAh ;Green (A) on white(F) background
+	int 10h
+	jmp E
+
+	destroy:
+	mov ah,2
+	int 10h
+	mov dl,' '
+	int 21h
+	E:
+ENDM Collide
