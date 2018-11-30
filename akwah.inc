@@ -76,7 +76,7 @@ draw macro
     endm draw
 
 mainGameLoop macro
-    local player2Check, continue
+    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish
     ; get input from user
     mov ah, 1
     int 16h
@@ -91,13 +91,44 @@ mainGameLoop macro
     mov si, offset player1
     mov bx, offset generalPlayer
     move
-    jmp continue
+    jmp checkBuild
     player2Check:
     cmp al, 2
-    jnz continue
+    jnz checkBuild
     mov player2Ori, ah
     mov si, offset player2
     mov bx, offset generalPlayer
     move
+    checkBuild:
+    cmp ah, 35h
+    jnz checkBuild2
+    mov dl, player1x
+    mov dh, player1y
+    mov ch, player1Ori
+    build
+    jmp checkFire1
+    checkBuild2:
+    cmp ah, 12h
+    jnz checkFire1
+    mov dl, player2x
+    mov dh, player2y
+    mov ch, player2Ori
+    build
+
+    checkFire1:
+    cmp ah, 34h
+    jnz checkFire2
+    nwblt blt1, player1x
+    jmp continue
+    checkFire2:
+    cmp ah, 13h
+    jnz continue
+    nwblt blt2, player2x
     continue:
+    dec bp
+    jnz finish
+    chkmovblt blt1
+    chkmovblt blt2
+    mov bp, 10000
+    finish:
 endm mainGameLoop
