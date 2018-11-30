@@ -1,4 +1,4 @@
-mem2mem macro index ;bx = si
+mem2mem macro index ;bx = si ; put the byte located at si in bx (memory)
     mov dl, [si + index]
     mov [bx + index], dl
 endm mem2mem
@@ -7,22 +7,22 @@ translateKeyPress macro ;input:scan code in ah/output:symbol in ah, al: playerNu
 local right, down, left, w, a, s, d, notDirectionKey
     ;48 up, 4D right, 50 down, 4B left
     mov al, 1; player 1
-    cmp ah, 48h
+    cmp ah, 48h ; is it up?
     jnz right
     mov ah, 1Eh
     jmp finish
     right:
-    cmp ah, 4Dh
+    cmp ah, 4Dh ; is it right?
     jnz down
     mov ah, 10h
     jmp finish
     down:
-    cmp ah, 50h
+    cmp ah, 50h ; is it down?
     jnz left
     mov ah, 1Fh
     jmp finish
     left:
-    cmp ah, 4Bh
+    cmp ah, 4Bh ; is it left?
     jnz w
     mov ah, 11h
     jmp finish
@@ -53,18 +53,21 @@ local right, down, left, w, a, s, d, notDirectionKey
     finish:
 endm translateKeyPress
 
-move macro
+move macro ; moves general player
+    ; copy certain player data in general player data
     mem2mem 0
     mem2mem 1
     mem2mem 2
+    ; move the general player
     movePlayer
+    ; copy general player data in the specific player again
     xchg bx, si
     mem2mem 0
     mem2mem 1
     mem2mem 2
     endm move
 
-draw macro
+draw macro ; this macro is responsible for the players at initinal positions
     mem2mem 0
     mem2mem 1
     mem2mem 2
@@ -80,27 +83,28 @@ mainGameLoop macro
     ; get input from user
     mov ah, 1
     int 16h
-    jz continue
+    jz continue ; if no input continue
+    ; clear buffer
     mov ah, 0
     int 16h
-    translateKeyPress
+    translateKeyPress ; translate the key pressed to get the Orintation
     mov pnum, al
-    cmp al, 1
+    cmp al, 1 ; is player1?
     jnz player2Check
     mov player1Ori, ah
     mov si, offset player1
     mov bx, offset generalPlayer
-    move
+    move ; move player1
     jmp checkBuild
     player2Check:
-    cmp al, 2
+    cmp al, 2 ; is player2?
     jnz checkBuild
     mov player2Ori, ah
     mov si, offset player2
     mov bx, offset generalPlayer
-    move
+    move ; move player2
     checkBuild:
-    cmp ah, 35h
+    cmp ah, 35h ; is player1 trying to build?
     jnz checkBuild2
     mov dl, player1x
     mov dh, player1y
@@ -108,7 +112,7 @@ mainGameLoop macro
     build
     jmp checkFire1
     checkBuild2:
-    cmp ah, 12h
+    cmp ah, 12h ; is player2 trying to build?
     jnz checkFire1
     mov dl, player2x
     mov dh, player2y
@@ -116,15 +120,16 @@ mainGameLoop macro
     build
 
     checkFire1:
-    cmp ah, 34h
+    cmp ah, 34h ; is player1 trying to fire?
     jnz checkFire2
     nwblt blt1, player1x
     jmp continue
     checkFire2:
-    cmp ah, 13h
+    cmp ah, 13h ; is player2 trying to fire?
     jnz continue
     nwblt blt2, player2x
     continue:
+    ; move bullets (if active) with delay 10000
     dec bp
     jnz finish
     chkmovblt blt1
