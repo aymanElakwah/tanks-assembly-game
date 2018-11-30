@@ -68,7 +68,7 @@ ENDM loadmap
 
 ;---------------------------------------------------------------------------------------------------------------
 
-;postion in dx ;direction in ch(1 for right,2 for left,3 for top,4 for bot)
+;postion in dx ;direction in ch(16D for right,17D for left,30D for top,31D for bot)
 build MACRO
 local checkright, checkleft, checktop, checkbot, okright, okleft, oktop, okbot,checkfree,construct,Exit
 
