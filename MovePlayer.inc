@@ -51,21 +51,11 @@ MovePlayer MACRO
 	int 10h
 
 	mov ori,cl
-<<<<<<< HEAD
-
-    	mov al,' '
+	mov al,' '
 	mov ah,9
 	mov cx,1
 	mov bx,7
 	int 10h
-
-=======
-	mov ah,2
-	mov dl,' '
-	int 21h 
-
-	
->>>>>>> 8a19e5c28ac2fb60224c7c611801333f52325b43
 	mov bl,chngx+si
 	mov bh,0
 	mov dl,posx
