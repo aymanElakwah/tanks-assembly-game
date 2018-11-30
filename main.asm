@@ -2,9 +2,11 @@ include MovePlayer.inc
 include akwah.inc
 include Macros.inc
 include blt.inc
-.model large
+include general.inc
+.model small
+.stack 64
 
-data segment 
+.data 
     
 player1 label byte
 player1x db 21
@@ -34,14 +36,10 @@ uppermap db '                 ³Ú²²                                              
 lowermap db '                 ³²²  ²²²       ²   ²   ²²²²²²²²²²²²²²²         ²²²²²²²² ²                       ³ ²     ²²²²²²           ²²²²²²²²²²²           ²²²²²²²²²²  ²²                   ³ ²²    ²²²²²²²          ² ²²²²²² ²²        ²²²²          ²²                    ³ ²²    ²²²²²²²²    ²²   ²²²²²²²²²²²       ²²     ²²   ²²                       ³  ²            ²²    ²² ²²²²²²²²²²²      ²²²²        ²²                        ³   ²²       ²   ²²      ² ² ² ² ² ²      ²²   ²²    ²²                         ³    ²²²  ²   ²    ²²    ² ² ² ² ² ²     ²²    ²²   ²²                          ³    ²  ²² ²  ²²    ²²²²  ² ² ² ² ²    ²²   ²²    ²²                            ³   ²          ²      ²²              ²²    ²²              ²²²                 ³ ²²   ² ² ²² ²         ²²²²²²²²²²²²²²                      ²²²                 ³                                                           ²²Ú                 ³²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²² ²²Û$'
 temp db 0
 
-ends
 
-stack segment
-    dw   128  dup(0)
-ends
 
-code segment
-start:
+.code
+main proc far
 ; set segment registers:
     mov ax, @data
     mov ds, ax
@@ -76,6 +74,6 @@ start:
 
     mov ax, 4c00h ; exit to operating system.
     int 21h
-ends
+main endp
 
-end start ; set entry point and stop the assembler.
+end main ; set entry point and stop the assembler.
