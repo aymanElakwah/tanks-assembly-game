@@ -12,9 +12,9 @@ loadmap MACRO
         ;mov dh,0d
         ;int 10h
 
-		mov dx,offset uppermap
-		mov ah, 9
-		int 21h
+	mov dx,offset uppermap
+	mov ah, 9
+	int 21h
         
         ;drawing flag of first player and hearts
         mov dx,0012h
@@ -32,29 +32,22 @@ loadmap MACRO
         mov ah,9
         mov al,219d
         int 10h
-		mov dx,0000
-		mov ah,2
-		int 10h
-		mov ah,9
-		mov al,3
-		mov cx,3
-		int 10h
+	UpadateHearts 1
 
         
         ;drawing flag of second player and hearts
-
-		mov ah,2
-		mov dx,0c00h
-		int 10h
-		mov ah,9
-		mov bl,0001
-		int 10h
-		mov cx,1
+	mov ah,2
+	mov dx,0c00h
+	int 10h
+	mov ah,9
+	mov bl,0001
+	int 10h
+	mov cx,1
         mov dx,174fh
         mov ah,2
         int 10h
         mov ah,9
-		mov al,219d
+	mov al,219d
         int 10h 
         dec dh
         mov ah,2
@@ -62,7 +55,7 @@ loadmap MACRO
         mov ah,9
         mov al,218d
         int 10h
-
+	UpadateHearts 2
 ENDM loadmap
 
 
@@ -143,5 +136,40 @@ Exit:	pop dx
 
 ENDM build
 
+UpadateHearts MACRO playernum 
+	
+	local player2,E
 
+	push ax
+	push bx
+	push cx
+	push dx
+	mov cx,playernum
+	mov bx,0
+	cmp cx,1
+	jnz player2
+
+	mov dx,0000
+	mov cl,lives1
+	jmp E
+	player2:
+	mov dx,0c00h
+	mov cl,lives2
+
+
+	E:
+	mov ah,2
+	int 10h
+	mov ah,9
+	mov bl,0004
+	mov al,3
+	mov ch,0
+	int 10h
+
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+
+ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
