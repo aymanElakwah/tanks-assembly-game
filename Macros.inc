@@ -160,6 +160,16 @@ UpadateHearts MACRO playernum
 	E:
 	mov ah,2
 	int 10h
+	
+	push cx
+	mov ah,9
+	mov bl,0004
+	mov al,' '
+	mov cl,3
+	mov ch,0
+	int 10h
+	pop cx
+
 	mov ah,9
 	mov bl,0004
 	mov al,3
