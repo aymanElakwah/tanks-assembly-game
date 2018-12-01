@@ -12,7 +12,7 @@ loadmap MACRO
         ;mov dh,0d
         ;int 10h
 
-	mov dx,offset uppermap
+	mov dx,offset map
 	mov ah, 9
 	int 21h
         
