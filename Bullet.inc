@@ -1,12 +1,3 @@
-;;;needed variabless
-;;blt1 db 3 dup(3 dup(?))
-;;blt2 db 3 dup(3 dup(?))
-;;post1 db ?,?,?
-;;post2 db ?,?,?
-
-
-
-
 
 nwblt MACRO bullet,position
     local adblt,mend
@@ -116,7 +107,10 @@ nwpost:
 
 	cmp al, ' '                   ;;the position is free
 	je move
-dead:	mov bullet,0ffh
+	cmp al,250			;; bullets don't destroy each other
+	je move								
+dead:	
+	mov bullet,0ffh
 	mov bullet+1,0ffH
 	Collide
 	jmp mend

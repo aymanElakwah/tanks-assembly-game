@@ -44,6 +44,12 @@ MovePlayer MACRO
 
     	cmp al,' '
     	jnz Drw
+	cmp dl,80
+	jz Drw
+	cmp dh,25
+	jz Drw
+	cmp dl,17
+	jz Drw
 
     	mov ah,2
 	mov dl,posx
