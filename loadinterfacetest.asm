@@ -1,3 +1,4 @@
+.include loadinterface.inc
 .model small
 .data
 
@@ -21,7 +22,11 @@ Startinterface   db    '      _________       _______        _              _   
                  db    '                                                                                '
                  db    '                                                                                ' 
 CHOOSEMODE       db    '                             ',16,' Normal  mode                                    '
-                 db    '                                Network mode (Coming Soon)                          $'
+                 db    '                                Network mode (Coming Soon)                          '
+                 db    '                                                                                '
+                 db    '                                                                                '
+                 db    '                                                                                '
+                 db    '                                                                                $'
                  
                  
       
@@ -33,6 +38,7 @@ main proc far
     
     mov ax,@data
     mov ds,ax
+   
     
     loadinterface
     
@@ -40,6 +46,7 @@ main proc far
     
     main endp
 end main
+    
     
     
     
