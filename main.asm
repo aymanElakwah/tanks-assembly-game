@@ -1,7 +1,7 @@
 include MovePlayer.inc
 include akwah.inc
 include Macros.inc
-include blt.inc
+include Bullet.inc
 .model small
 .stack 64
 
