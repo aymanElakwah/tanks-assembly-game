@@ -4,7 +4,7 @@ loadmap MACRO
         ;drawing whole map with 
         ;mov es,ax
         ;mov ah,13h
-        ;mov bp,offset uppermap
+        ;mov bp,offset map
         ;mov bh,0
         ;mov bl,6
         ;mov cx,1920d
@@ -12,6 +12,11 @@ loadmap MACRO
         ;mov dh,0d
         ;int 10h
 
+
+	mov ah,2
+	mov dx,0
+	mov bh,0
+	int 10h
 	mov dx,offset map
 	mov ah, 9
 	int 21h
@@ -30,30 +35,30 @@ loadmap MACRO
         mov ah,2
         int 10h
         mov ah,9
-        mov al,219d
+        mov al,218d
         int 10h
 	UpadateHearts 1
 
         
         ;drawing flag of second player and hearts
-	mov ah,2
-	mov dx,0c00h
-	int 10h
-	mov ah,9
-	mov bl,0001
-	int 10h
+	;mov ah,2
+	;mov dx,0c00h
+	;int 10h
+	;mov ah,9
+	;mov bl,0001
+	;int 10h
 	mov cx,1
         mov dx,174fh
         mov ah,2
         int 10h
         mov ah,9
-	mov al,219d
+	mov al,'¿'
         int 10h 
         dec dh
         mov ah,2
         int 10h
         mov ah,9
-        mov al,218d
+        mov al,'¿'
         int 10h
 	UpadateHearts 2
 ENDM loadmap
@@ -183,3 +188,103 @@ UpadateHearts MACRO playernum
 
 ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
+
+loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode
+
+local back,normalmode,again,check1,continue,makedelays,wholelogo
+push ax
+push dx
+push cx
+
+
+
+
+
+mov ah,2												; making animation (changing cursor postion)
+mov dx,1900h
+int 10h
+
+				mov cx,24d
+				mov bx,0
+wholelogo:		mov ah,9
+				mov dx,offset Startinterface
+				add dx,bx
+				int 21h
+				push cx
+				mov cx,0ffffh
+makedelay1:	    
+				loop makedelay1							
+				mov cx,0ffffh
+makedelay2:		
+				loop makedelay2
+				pop cx
+				add bx,81d
+				loop wholelogo
+				
+
+
+mov ah,2								; start cursor postion
+mov bh,0
+mov dx,111dh
+int 10h
+
+
+again:				mov ah,1
+					int 16h
+					jz	again				;if no input
+					mov ah,0
+					int 16h
+					cmp ah,48h
+					jz check1				;check if he can go up or no
+					cmp ah,50h
+					jz check2				;check if he can go down or no
+					jnz continue
+
+check1:				cmp dh,12h						;he is down
+					jz ok1							;he can go up
+					jmp continue 
+
+check2:				cmp dh,11h						;he is up
+					jz ok2							;he can go down
+					jmp continue
+
+ok1: mov dx,121dh
+	 mov ah,2
+	 int 10h
+	 mov dl,' '
+	 int 21h	
+	 mov dx,111dh
+	 int 10h
+	 mov dl,16
+	 int 21h
+	 jmp continue
+
+	     
+ok2:mov dx,111Dh
+	 mov ah,2
+	 int 10h
+	 mov dl,' '
+	 int 21h	
+	 mov dx,121dh
+	 int 10h
+	 mov dl,16
+	 int 21h
+	 jmp continue
+
+
+continue:	cmp ah,1ch
+			jz checkgamemode
+			jnz again
+
+
+checkgamemode:  cmp dh,11h
+      			jz normalmode
+				jnz again					; no networkmode yet
+
+normalmode:       loadmap
+
+pop cx
+pop dx
+pop ax
+
+Endm loadinterface
