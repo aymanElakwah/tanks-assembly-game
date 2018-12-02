@@ -41,24 +41,18 @@ loadmap MACRO
 
         
         ;drawing flag of second player and hearts
-	;mov ah,2
-	;mov dx,0c00h
-	;int 10h
-	;mov ah,9
-	;mov bl,0001
-	;int 10h
 	mov cx,1
         mov dx,174fh
         mov ah,2
         int 10h
         mov ah,9
-	mov al,'¿'
+	mov al,'Ù'
         int 10h 
         dec dh
         mov ah,2
         int 10h
         mov ah,9
-        mov al,'¿'
+        mov al,'Ù'
         int 10h
 	UpadateHearts 2
 ENDM loadmap
