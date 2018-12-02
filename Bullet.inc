@@ -1,3 +1,12 @@
+;;;needed variabless
+;;blt1 db 3 dup(3 dup(?))
+;;blt2 db 3 dup(3 dup(?))
+;;post1 db ?,?,?
+;;post2 db ?,?,?
+
+
+
+
 
 nwblt MACRO bullet,position
     local adblt,mend
@@ -40,7 +49,7 @@ finish:
 ENDM chkmovblt
 
 movblt MACRO bullet
-	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead
+	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead,borders
 
 	mov dl,bullet				;;get bullet current position in dx
 	mov dh,bullet+1
@@ -62,7 +71,7 @@ cont4:
 	jne cont
 chk1:
 	cmp dh,0		;; check border
-	je dead
+	je borders
 	sub dh,1					;; next move
 	jmp nwpost
 
@@ -73,7 +82,7 @@ cont:
 	jne cont2
 chk2:
 	cmp dh,24             ;; check border
-	je dead
+	je borders
 	add dh,1					;; next move
 	jmp nwpost
 
@@ -83,7 +92,7 @@ cont2:
 	jne cont3
 chk3:
 	cmp dl,0
-	je dead
+	je borders
 	sub dl,1					;; next move
 	jmp nwpost
 
@@ -93,7 +102,7 @@ cont3:
 	jne mend
 chk4:
 	cmp dl,79
-	je dead
+	je borders
 	add dl,1					;; next move
 	jmp nwpost
 
@@ -107,12 +116,11 @@ nwpost:
 
 	cmp al, ' '                   ;;the position is free
 	je move
-	cmp al,250			;; bullets don't destroy each other
-	je move								
 dead:	
+	Collide
+borders:
 	mov bullet,0ffh
 	mov bullet+1,0ffH
-	Collide
 	jmp mend
 
 move:
@@ -225,7 +233,15 @@ Collide Macro
 	destroy:
 	mov ah,2
 	int 10h
-	mov dl,' '
-	int 21h
+
+	mov ah,9 ;
+	mov bh,0 ;
+	mov al,' ' ;
+	mov cx,1 ;
+	mov bl,07h;
+	int 10h 
+
+
+	
 	E:
 ENDM Collide
