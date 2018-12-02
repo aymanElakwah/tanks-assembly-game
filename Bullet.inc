@@ -181,6 +181,7 @@ Collide Macro
 	mov dl,16
 	mov ori,dl
 	DrawPlayer
+	Destroy_Sound
 	jmp E				
 
 	Update2:
@@ -204,6 +205,7 @@ Collide Macro
 	mov dl,17
 	mov ori,dl
 	DrawPlayer
+	Destroy_Sound
 	jmp E			
 
 	Game1:
@@ -216,6 +218,7 @@ Collide Macro
 	mov cx,5h ;5 times
 	mov bl,0FAh ;Green (A) on white(F) background
 	int 10h
+	Destroy_Sound
 	jmp E
 
 	Game2:
@@ -228,20 +231,51 @@ Collide Macro
 	mov cx,5h ;5 times
 	mov bl,0FAh ;Green (A) on white(F) background
 	int 10h
+	Destroy_Sound
 	jmp E
 
 	destroy:
 	mov ah,2
 	int 10h
-
+	
 	mov ah,9 ;
 	mov bh,0 ;
 	mov al,' ' ;
 	mov cx,1 ;
 	mov bl,07h;
 	int 10h 
-
+	Destroy_Sound
 
 	
 	E:
 ENDM Collide
+
+
+Destroy_Sound Macro
+
+	local delay1,delay2
+        mov     al, 182         ; Prepare the speaker for the
+        out     43h, al         ;  note.
+        mov     ax, 4560        ; Frequency number (in decimal)
+                                ;  for middle C.
+        out     42h, al         ; Output low byte.
+        mov     al, ah          ; Output high byte.
+        out     42h, al 
+        in      al, 61h         ; Turn on note (get value from
+                                ;  port 61h).
+        or      al, 00000011b   ; Set bits 1 and 0.
+        out     61h, al         ; Send new value.
+        mov     bx, 1			; Pause for duration of note.
+delay1:
+        mov     cx, 65535
+delay2:
+        dec     cx
+        jne     delay2
+        dec     bx
+        jne     delay1
+        in      al, 61h         ; Turn off note (get value from
+                                ;  port 61h).
+        and     al, 11111100b   ; Reset bits 1 and 0.
+        out     61h, al         ; Send new value
+
+  ENDM Destroy_Sound
