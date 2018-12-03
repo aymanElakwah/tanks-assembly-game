@@ -1,6 +1,6 @@
 include MovePlayer.inc
 include akwah.inc
-include circle.inc
+include initializing.inc
 include Macros.inc
 include Bullet.inc
 .model small
@@ -97,6 +97,8 @@ main proc far
 ; set segment registers:
     mov ax, @data
     mov ds, ax
+thebegining:
+	initialize
     mov al, 3
     mov ah, 0
     int 10h
