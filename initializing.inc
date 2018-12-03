@@ -1,3 +1,4 @@
+initialize macro
 mov blt1,0ffh
     mov blt1+3,0ffh
     mov blt1+6,0ffh
@@ -12,3 +13,4 @@ mov blt1,0ffh
     mov player2x,76
     mov player2y,22  
     mov player2ori,17
+	endm initialize
