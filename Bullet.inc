@@ -147,7 +147,7 @@ drawblt macro bullet
 endm drawblt		
 
 Collide Macro
-	LOCAL E, Update1, Update2, Destroy, Game1, Game2 
+	LOCAL E, Update1, Update2, Destroy, Game1, Game2,lines,hhh,lines2,hhh2 
 	cmp al,178			;if (Block) destroy
 	jz destroy
 	cmp ah,0EH			;if (player1) update1 //check by position
@@ -181,7 +181,6 @@ Collide Macro
 	mov dl,16
 	mov ori,dl
 	DrawPlayer
-	Destroy_Sound
 	jmp E				
 
 	Update2:
@@ -205,77 +204,102 @@ Collide Macro
 	mov dl,17
 	mov ori,dl
 	DrawPlayer
-	Destroy_Sound
 	jmp E			
 
 	Game1:
+	    
+     
+    mov ah,0
+    mov al,13h
+    int 10h 
+
+       mov si,0
+    lines:
+    mov ax,0fffh
+ hhh: dec ax
+      cmp ax,0
+      jne hhh  
+     mov cx,50
+    mov dx,105
+    mov al,0ch  
+    mov ah,0ch
+    add dx,si 
+    int 10h  
+    add cx,si
+    int 10h
+    sub dx,si
+    int 10h
+    sub dx,si
+    int 10h
+    sub cx,si
+    int 10h
+    sub cx,si
+    int 10h
+    add dx,si
+    int 10h
+    add dx,si
+    int 10h  
+    inc bp
+    add si,2
+    cmp bp,1000
+    jne lines
 	mov ah,0
-	mov al,3h
-	int 10h
-	mov ah,9 ;Display
-	mov bh,0 ;Page 0
-	mov al,'2' ;Letter D
-	mov cx,5h ;5 times
-	mov bl,0FAh ;Green (A) on white(F) background
-	int 10h
-	Destroy_Sound
-	jmp E
+	int 16h
+	jmp thebegining
 
 	Game2:
+	 
+    mov ah,0
+    mov al,13h
+    int 10h 
+
+       mov si,0
+    lines2:
+    mov ax,0fffh
+ hhh2: dec ax
+      cmp ax,0
+      jne hhh  
+     mov cx,50
+    mov dx,105
+    mov al,0ch  
+    mov ah,0ch
+    add dx,si 
+    int 10h  
+    add cx,si
+    int 10h
+    sub dx,si
+    int 10h
+    sub dx,si
+    int 10h
+    sub cx,si
+    int 10h
+    sub cx,si
+    int 10h
+    add dx,si
+    int 10h
+    add dx,si
+    int 10h  
+    inc bp
+    add si,2
+    cmp bp,1000
+    jne lines
 	mov ah,0
-	mov al,3h
-	int 10h
-	mov ah,9 ;Display
-	mov bh,0 ;Page 0
-	mov al,'1' ;Letter D
-	mov cx,5h ;5 times
-	mov bl,0FAh ;Green (A) on white(F) background
-	int 10h
-	Destroy_Sound
-	jmp E
+	int 16h
+	jmp thebegining
 
 	destroy:
 	mov ah,2
 	int 10h
-	
+
 	mov ah,9 ;
 	mov bh,0 ;
 	mov al,' ' ;
 	mov cx,1 ;
 	mov bl,07h;
 	int 10h 
-	Destroy_Sound
+
 
 	
 	E:
+	
 ENDM Collide
-
-
-Destroy_Sound Macro
-
-	local delay1,delay2
-        mov     al, 182         ; Prepare the speaker for the
-        out     43h, al         ;  note.
-        mov     ax, 4560        ; Frequency number (in decimal)
-                                ;  for middle C.
-        out     42h, al         ; Output low byte.
-        mov     al, ah          ; Output high byte.
-        out     42h, al 
-        in      al, 61h         ; Turn on note (get value from
-                                ;  port 61h).
-        or      al, 00000011b   ; Set bits 1 and 0.
-        out     61h, al         ; Send new value.
-        mov     bx, 1			; Pause for duration of note.
-delay1:
-        mov     cx, 65535
-delay2:
-        dec     cx
-        jne     delay2
-        dec     bx
-        jne     delay1
-        in      al, 61h         ; Turn off note (get value from
-                                ;  port 61h).
-        and     al, 11111100b   ; Reset bits 1 and 0.
-        out     61h, al         ; Send new value
-
-  ENDM Destroy_Sound
