@@ -1,13 +1,3 @@
-;;;needed variabless
-;;blt1 db 3 dup(3 dup(?))
-;;blt2 db 3 dup(3 dup(?))
-;;post1 db ?,?,?
-;;post2 db ?,?,?
-
-
-
-
-
 nwblt MACRO bullet,position
     local adblt,mend
 
@@ -181,6 +171,7 @@ Collide Macro
 	mov dl,16
 	mov ori,dl
 	DrawPlayer
+	Destroy_Sound
 	jmp E				
 
 	Update2:
@@ -204,6 +195,7 @@ Collide Macro
 	mov dl,17
 	mov ori,dl
 	DrawPlayer
+	Destroy_Sound
 	jmp E			
 
 	Game1:
@@ -212,7 +204,7 @@ Collide Macro
     mov ah,0
     mov al,13h
     int 10h 
-
+	Destroy_Sound
        mov si,0
     lines:
     mov ax,0fffh
@@ -252,7 +244,7 @@ Collide Macro
     mov ah,0
     mov al,13h
     int 10h 
-
+	Destroy_Sound
        mov si,0
     lines2:
     mov ax,0fffh
@@ -297,9 +289,42 @@ Collide Macro
 	mov cx,1 ;
 	mov bl,07h;
 	int 10h 
-
+	Destroy_Sound
 
 	
 	E:
 	
 ENDM Collide
+
+
+
+
+
+
+Destroy_Sound Macro
+	local delay1,delay2
+        mov     al, 182         ; Prepare the speaker for the
+        out     43h, al         ;  note.
+        mov     ax, 4560        ; Frequency number (in decimal)
+                                ;  for middle C.
+        out     42h, al         ; Output low byte.
+        mov     al, ah          ; Output high byte.
+        out     42h, al 
+        in      al, 61h         ; Turn on note (get value from
+                                ;  port 61h).
+        or      al, 00000011b   ; Set bits 1 and 0.
+        out     61h, al         ; Send new value.
+        mov     bx, 1			; Pause for duration of note.
+delay1:
+        mov     cx, 65535
+delay2:
+        dec     cx
+        jne     delay2
+        dec     bx
+        jne     delay1
+        in      al, 61h         ; Turn off note (get value from
+                                ;  port 61h).
+        and     al, 11111100b   ; Reset bits 1 and 0.
+        out     61h, al         ; Send new value
+
+  ENDM Destroy_Sound
