@@ -51,13 +51,13 @@ loadmap MACRO
         mov ah,2
         int 10h
         mov ah,9
-	mov al,'Ã™'
+	mov al,'Ù'
         int 10h 
         dec dh
         mov ah,2
         int 10h
         mov ah,9
-        mov al,'Ã™'
+        mov al,'Ù'
         int 10h
 	UpadateHearts 2
 ENDM loadmap
@@ -285,3 +285,4 @@ pop dx
 pop ax
 
 Endm loadinterface
+      

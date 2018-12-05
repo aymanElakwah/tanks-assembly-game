@@ -1,6 +1,6 @@
-include MovePlayer.inc
+include mp.inc
 include akwah.inc
-include initializing.inc
+include init.inc
 include Macros.inc
 include Bullet.inc
 .model small
