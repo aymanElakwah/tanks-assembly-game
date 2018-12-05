@@ -106,6 +106,8 @@ nwpost:
 
 	cmp al, ' '                   ;;the position is free
 	je move
+	cmp al, 250
+	je move
 dead:	
 	Collide
 borders:
