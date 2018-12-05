@@ -1,4 +1,3 @@
-
 loadmap MACRO
 
         ;drawing whole map with 
@@ -41,6 +40,12 @@ loadmap MACRO
 
         
         ;drawing flag of second player and hearts
+	;mov ah,2
+	;mov dx,0c00h
+	;int 10h
+	;mov ah,9
+	;mov bl,0001
+	;int 10h
 	mov cx,1
         mov dx,174fh
         mov ah,2
@@ -136,7 +141,6 @@ Exit:	pop dx
 ENDM build
 
 UpadateHearts MACRO playernum 
-	
 	local player2,E
 
 	push ax
@@ -184,7 +188,6 @@ ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
 
 loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode
-
 local back,normalmode,again,check1,continue,makedelays,wholelogo
 push ax
 push dx
