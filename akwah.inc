@@ -78,8 +78,23 @@ draw macro ; this macro is responsible for the players at initinal positions
     mem2mem 2
     endm draw
 
+pauseGame macro
+    local pause_game
+    pause_game:
+    mov ah, 1
+    int 16h
+    jz pause_game
+    mov ah, 0
+    int 16h
+    cmp ah, 1Ch
+    jnz pause_game
+endm pauseGame
+
 mainGameLoop macro
-    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish
+    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish, pause
+    ;delay
+    dec bp
+    jnz finish
     ; get input from user
     mov ah, 1
     int 16h
@@ -95,7 +110,7 @@ mainGameLoop macro
     mov si, offset player1
     mov bx, offset generalPlayer
     move ; move player1
-    jmp checkBuild
+    jmp continue
     player2Check:
     cmp al, 2 ; is player2?
     jnz checkBuild
@@ -103,6 +118,7 @@ mainGameLoop macro
     mov si, offset player2
     mov bx, offset generalPlayer
     move ; move player2
+    jmp continue
     checkBuild:
     cmp ah, 35h ; is player1 trying to build?
     jnz checkBuild2
@@ -110,7 +126,7 @@ mainGameLoop macro
     mov dh, player1y
     mov ch, player1Ori
     build
-    jmp checkFire1
+    jmp continue
     checkBuild2:
     cmp ah, 12h ; is player2 trying to build?
     jnz checkFire1
@@ -118,7 +134,7 @@ mainGameLoop macro
     mov dh, player2y
     mov ch, player2Ori
     build
-
+    jmp continue
     checkFire1:
     cmp ah, 34h ; is player1 trying to fire?
     jnz checkFire2
@@ -126,12 +142,14 @@ mainGameLoop macro
     jmp continue
     checkFire2:
     cmp ah, 13h ; is player2 trying to fire?
-    jnz continue
+    jnz pause
     nwblt blt2, player2x
+    jmp continue
+    pause:
+    cmp ah, 1Ch
+    jnz continue
+    pauseGame
     continue:
-    ; move bullets (if active) with delay 10000
-    dec bp
-    jnz finish
     chkmovblt blt1
     chkmovblt blt2
     mov bp, 10000
