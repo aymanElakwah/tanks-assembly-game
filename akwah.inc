@@ -91,7 +91,7 @@ pauseGame macro
 endm pauseGame
 
 mainGameLoop macro
-    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish, pause
+    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish, pause, notExit
     ;delay
     dec bp
     jnz finish
@@ -102,6 +102,11 @@ mainGameLoop macro
     ; clear buffer
     mov ah, 0
     int 16h
+    cmp ah, 1 ;is ESC?
+    jnz notExit
+    exitGame
+    jz finish
+    notExit:
     translateKeyPress ; translate the key pressed to get the Orintation
     mov pnum, al
     cmp al, 1 ; is player1?
