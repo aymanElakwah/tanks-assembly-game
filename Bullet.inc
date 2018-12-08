@@ -71,7 +71,7 @@ cont:
 	je chk2
 	jne cont2
 chk2:
-	cmp dh,24             ;; check border
+	cmp dh,23             ;; check border
 	je borders
 	add dh,1					;; next move
 	jmp nwpost
@@ -91,7 +91,7 @@ cont3:
 	je chk4
 	jne mend
 chk4:
-	cmp dl,78
+	cmp dl,79
 	je borders
 	add dl,1					;; next move
 	jmp nwpost
