@@ -46,7 +46,7 @@ MovePlayer MACRO
     	jnz Drw
 	cmp dl,80
 	jz Drw
-	cmp dh,25
+	cmp dh,24
 	jz Drw
 	cmp dl,17
 	jz Drw

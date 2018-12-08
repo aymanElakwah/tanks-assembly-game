@@ -44,7 +44,7 @@ loadmap MACRO
 	;mov dx,0c00h
 	;int 10h
 	;mov ah,9
-	;mov bl,0001
+	mov bl,0001
 	;int 10h
 	mov cx,1
         mov dx,174fh
