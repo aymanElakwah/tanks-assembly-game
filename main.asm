@@ -20,6 +20,9 @@ player2y db 22
 player2Ori db 17
 player2Name db 17 dup('$')
 
+pausedStatus db 'The game is paused$'
+emptyStatus db 79 dup (' '), '$'
+
 
 pnum db  ?          ;Player number = pnum (0 or 1)
 generalPlayer label byte

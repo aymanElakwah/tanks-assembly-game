@@ -22,3 +22,13 @@ users macro
     mov ah, 9
     int 21h
 endm users
+
+notify macro string
+    mov dl, 0
+    mov dh, 24
+    mov ah, 2
+    int 10h
+    mov dx, offset string
+    mov ah, 9
+    int 21h
+endm status

@@ -80,6 +80,7 @@ draw macro ; this macro is responsible for the players at initinal positions
 
 pauseGame macro
     local pause_game
+    notify pausedStatus
     pause_game:
     mov ah, 1
     int 16h
@@ -88,6 +89,7 @@ pauseGame macro
     int 16h
     cmp ah, 1Ch
     jnz pause_game
+    notify emptyStatus
 endm pauseGame
 
 mainGameLoop macro
