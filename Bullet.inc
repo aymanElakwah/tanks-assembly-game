@@ -91,7 +91,7 @@ cont3:
 	je chk4
 	jne mend
 chk4:
-	cmp dl,79
+	cmp dl,78
 	je borders
 	add dl,1					;; next move
 	jmp nwpost
@@ -139,7 +139,7 @@ drawblt macro bullet
 endm drawblt		
 
 Collide Macro
-	LOCAL E, Update1, Update2, Destroy, Game1, Game2,lines,hhh,lines2,hhh2 
+	LOCAL E, Update1, Update2, Destroy, Game1, Gamme2,lines,hhh,linnes2,hh2 
 	cmp al,178			;if (Block) destroy
 	jz destroy
 	cmp ah,0EH			;if (player1) update1 //check by position
@@ -149,7 +149,7 @@ Collide Macro
 	cmp al,218			;if (flag1) Game1 //the first player lost
 	jz Game1
 	cmp al,217
-	jz Game2			;else flage2 Game2 //the second player lost
+	jz Gamme2			;else flage2 Game2 //the second player lost
 	jmp E
 
 	update1:
@@ -183,7 +183,7 @@ Collide Macro
 	int 21h	
 	mov cl,lives2			;check for remaining lives & decrement it
 	dec cl
-	jz Game2			;if dead, lives = 0, second player lost
+	jz Gamme2			;if dead, lives = 0, second player lost
 	mov lives2,cl
 	UpadateHearts 2			;redraw hearts
 	mov dl,76			;return player to respawn position
@@ -201,8 +201,6 @@ Collide Macro
 	jmp E			
 
 	Game1:
-	    
-     
     mov ah,0
     mov al,13h
     int 10h 
@@ -237,22 +235,31 @@ Collide Macro
     add si,2
     cmp bp,1000
     jne lines
+	mov ah,2
+	mov dx,0A0Ah
+	int 10h 
+	mov ah, 9
+	mov dx, offset user1
+	int 21h
+	mov ah, 9
+	mov dx, offset won
+	int 21h
 	mov ah,0
 	int 16h
 	jmp thebegining
 
-	Game2:
-	 
+	Gamme2:
     mov ah,0
     mov al,13h
     int 10h 
 	Destroy_Sound
        mov si,0
-    lines2:
+    linnes2:
     mov ax,0fffh
- hhh2: dec ax
+ hh2:
+	dec ax
       cmp ax,0
-      jne hhh  
+      jne hh2  
      mov cx,50
     mov dx,105
     mov al,0ch  
@@ -276,7 +283,16 @@ Collide Macro
     inc bp
     add si,2
     cmp bp,1000
-    jne lines
+    jne linnes2
+	mov ah,2
+	mov dx,0A0Ah
+	int 10h 
+	mov ah, 9
+	mov dx, offset user2
+	int 21h
+	mov ah, 9
+	mov dx, offset won
+	int 21h
 	mov ah,0
 	int 16h
 	jmp thebegining
