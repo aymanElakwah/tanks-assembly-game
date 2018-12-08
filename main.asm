@@ -5,7 +5,6 @@ include init.inc
 include Macros.inc
 include Bullet.inc
 .model small
-;.386
 .stack 64
 
 .data
@@ -13,12 +12,14 @@ player1 label byte
 player1x db 21
 player1y db 0
 player1Ori db 16
-user1 db 17 dup('$')
+user1 db 16, ?
+player1Name db 16 dup('$')
 player2 label byte
 player2x db 76
 player2y db 22
-player2Ori db 17
-user2 db 17 dup('$')
+player2Ori db 18         
+user2 db 16, ?
+player2Name db 16 dup('$')
 
 pausedStatus db 'The game is paused$'
 emptyStatus db 79 dup (' '), '$'
@@ -36,6 +37,9 @@ chngy db 00,00,-1,01
 
 blt1 db 3 dup(0ffh, ?, ?)
 blt2 db 3 dup(0FFh, ?, ?)
+Msg1  db 'USER1: Please Enter Your Name: $'
+Msg2  db 'USER2: Please Enter Your Name: $'
+spaces   db '                $'
 
 Startinterface   db    '      _________       _______        _              _              _______      $'
                  db    '      \__   __/      (  ___  )      ( (    /|      | \    /\      (  ____ \     $'
@@ -51,13 +55,13 @@ Startinterface   db    '      _________       _______        _              _   
                  db    '                                                                                $'
                  db    '                                                                                $'
                  db    '                                                                                $'
+                 db    '                                                                                $' 
+                 db    '                             ',16,' Normal  Mode                                     $'
+                 db    '                               Network Mode (Coming Soon)                       $'
+                 db    '                               Chatting Mode<Coming Soon>                       $'
+                 db    '                               Exit                                             $'
                  db    '                                                                                $'
-                 db    '                                                                                $'
-                 db    '                             ',16,' Normal  mode                                $'
-                 db    '                                         Network mode (Coming Soon)             $'
-                 db    '                                                                                $'
-                 db    '                                                                                $'
-                 db    '                                                                                $'
+                 db    '                                                                                $' 
                  db    '                                                                                $' 
                  db    '                                                                                $'
                  db    '                                                                                $'
@@ -72,8 +76,8 @@ map             db     '                 ³Ú²²                                   
                 db     '                 ³ ²²²²   ²²²    ²   ²² ²²²²²²²²²²²²²²²              ²          '
                 db     '                 ³   ²           ²      ²²²  ²²²²  ²²²²         ²²²²²²     ²²   '
                 db     '                 ³  ²      ²²²²²²   ²²  ²²   ²²²²   ²²²            ²²²²    ²²   '
-                db     '                 ³²²   ²²²²             ²    ²²²²    ²²            ²²²²  ²²     '
-                db     'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³²²²²²²²²  ²   ²²      ²²²²²²²²²²²²²²² ²²²²²²      ²²²  ²²     '
+                db     'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³²²   ²²²²             ²    ²²²²    ²²            ²²²²  ²²     '
+                db     '                 ³²²²²²²²²  ²   ²²      ²²²²²²²²²²²²²²² ²²²²²²      ²²²  ²²     '
                 db     '                 ³²²  ²²²       ²   ²   ²²²²²²²²²²²²²²²         ²²²²²²²² ²      '
                 db     '                 ³ ²     ²²²²²²           ²²²²²²²²²²²           ²²²²²²²²²²  ²²  '
                 db     '                 ³ ²²    ²²²²²²²          ² ²²²²²² ²²        ²²²²          ²²   '
@@ -84,8 +88,8 @@ map             db     '                 ³Ú²²                                   
                 db     '                 ³    ²  ²² ²  ²²    ²²²²  ² ² ² ² ²    ²²   ²²    ²²           ' 
                 db     '                 ³   ²          ²      ²²              ²²    ²²              ²²²'
                 db     '                 ³ ²²   ² ² ²² ²         ²²²²²²²²²²²²²²                      ²²²'
-                db     '                 ³                                                           ²²¿'    
-                db     '                 ³²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²² ²²¿$'
+                db     '                 ³                                                           ²²Ù'    
+                db     '                 ³²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²² ²²Ù$'
 temp db 0
 lives1 db 3 
 lives2 db 3
@@ -104,8 +108,9 @@ main proc far
 ; set segment registers:
     mov ax, @data
     mov ds, ax
+    WriteNames
 thebegining:
-	initialize
+    initialize
     mov al, 3
     mov ah, 0
     int 10h

@@ -239,7 +239,7 @@ Collide Macro
 	mov dx,0A0Ah
 	int 10h 
 	mov ah, 9
-	mov dx, offset user1
+	mov dx, offset player1Name
 	int 21h
 	mov ah, 9
 	mov dx, offset won
@@ -288,7 +288,7 @@ Collide Macro
 	mov dx,0A0Ah
 	int 10h 
 	mov ah, 9
-	mov dx, offset user2
+	mov dx, offset player2Name
 	int 21h
 	mov ah, 9
 	mov dx, offset won

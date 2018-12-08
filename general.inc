@@ -11,14 +11,14 @@ users macro
     mov dh, 0
     mov ah, 2
     int 10h
-    mov dx, offset user1
+    mov dx, offset player1Name
     mov ah, 9
     int 21h
     mov dl, 4
-    mov dh, 12
+    mov dh, 11
     mov ah, 2
     int 10h
-    mov dx, offset user2
+    mov dx, offset player2Name
     mov ah, 9
     int 21h
 endm users

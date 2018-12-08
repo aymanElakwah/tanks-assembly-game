@@ -1,17 +1,5 @@
 loadmap MACRO
 
-        ;drawing whole map with 
-        ;mov es,ax
-        ;mov ah,13h
-        ;mov bp,offset map
-        ;mov bh,0
-        ;mov bl,6
-        ;mov cx,1920d
-        ;mov dl,0d                                             
-        ;mov dh,0d
-        ;int 10h
-
-
 	mov ah,2
 	mov dx,0
 	mov bh,0
@@ -36,16 +24,11 @@ loadmap MACRO
         mov ah,9
         mov al,218d
         int 10h
-	UpadateHearts 1
-
+		UpadateHearts 1 
         
+
         ;drawing flag of second player and hearts
-	;mov ah,2
-	;mov dx,0c00h
-	;int 10h
-	;mov ah,9
 	mov bl,0001
-	;int 10h
 	mov cx,1
         mov dx,174fh
         mov ah,2
@@ -59,8 +42,8 @@ loadmap MACRO
         mov ah,9
         mov al,'Ù'
         int 10h
-	UpadateHearts 2
-	users
+		UpadateHearts 2
+        users
 ENDM loadmap
 
 
@@ -141,7 +124,7 @@ Exit:	pop dx
 
 ENDM build
 
-UpadateHearts MACRO playernum 
+UpadateHearts MACRO playernum
 	local player2,E
 
 	push ax
@@ -157,7 +140,7 @@ UpadateHearts MACRO playernum
 	mov cl,lives1
 	jmp E
 	player2:
-	mov dx,0c00h
+	mov dx,0b00h
 	mov cl,lives2
 
 
@@ -188,15 +171,18 @@ UpadateHearts MACRO playernum
 ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
 
-loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode
-local back,normalmode,again,check1,continue,makedelays,wholelogo
+loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode ; 13h==chatting mode ;  14==Exit
+local normalmode,again,check1,check2,continue,makedelay1,makedelay2,wholelogo,draw,Exit
 push ax
 push dx
 push cx
+push bx
 
 
-
-
+mov ah,0
+mov al,3
+int 10h
+			
 
 mov ah,2												; making animation (changing cursor postion)
 mov dx,1900h
@@ -221,12 +207,15 @@ makedelay2:
 				
 
 
-mov ah,2								; start cursor postion
-mov bh,0
-mov dx,111dh
-int 10h
+				mov ah,2								; start cursor postion
+				mov bh,0
+				mov dx,0f1dh
+				int 10h
 
 
+					mov ch, 32
+					mov ah, 1
+					int 10h 
 again:				mov ah,1
 					int 16h
 					jz	again				;if no input
@@ -238,36 +227,52 @@ again:				mov ah,1
 					jz check2				;check if he can go down or no
 					jnz continue
 
-check1:				cmp dh,12h						;he is down
-					jz ok1							;he can go up
-					jmp continue 
+check1:				dec dh
+					cmp dh,0fh																
+					jae Clearpostion1	    ;Clear cusor before drawing 
+					jb  fix1													 
 
-check2:				cmp dh,11h						;he is up
-					jz ok2							;he can go down
-					jmp continue
+check2:				inc dh
+					cmp dh,12h
+					jbe Clearpostion2       ;Clear cusor before drawing							
+					ja 	fix2											
 
-ok1: mov dx,121dh
-	 mov ah,2
-	 int 10h
-	 mov dl,' '
-	 int 21h	
-	 mov dx,111dh
-	 int 10h
-	 mov dl,16
-	 int 21h
-	 jmp continue
+fix1:inc dh
+     jmp again                      ; if clicks  up  and at the edge 
 
-	     
-ok2:mov dx,111Dh
-	 mov ah,2
-	 int 10h
-	 mov dl,' '
-	 int 21h	
-	 mov dx,121dh
-	 int 10h
-	 mov dl,16
-	 int 21h
-	 jmp continue
+                                    ; if clicks down and at the edge
+fix2:dec dh
+     jmp again
+													
+
+Clearpostion1:inc dh
+              push dx
+              mov ah,2
+              int 10h
+              mov dl,' '
+              int 21h
+              pop dx
+              dec dh
+              int 10h
+              jmp Draw
+              
+
+Clearpostion2:dec dh
+              push dx
+              mov ah,2
+              int 10h 
+              mov dl,' '
+              int 21h
+              pop dx
+              inc dh
+              int 10h
+              jmp Draw
+
+Draw: push dx
+	  mov dl,16
+	  int 21h
+	  pop dx
+	  jmp continue
 
 
 continue:	cmp ah,1ch
@@ -275,15 +280,128 @@ continue:	cmp ah,1ch
 			jnz again
 
 
-checkgamemode:  cmp dh,11h
+checkgamemode:  cmp dh,0fh
       			jz normalmode
-				jnz again					; no networkmode yet
+				
+				cmp dh,12h					
+				jz Exit
+				jnz again
 
-normalmode:       loadmap
 
+Exit:					
+
+normalmode:
+		
+loadmap
+
+
+pop bx
 pop cx
 pop dx
 pop ax
 
 Endm loadinterface
       
+
+
+WriteNames macro
+		local b1,b2,chk1,chk2,E,fx1,fx2,cont
+
+				mov ah,0
+				mov al,3
+				int 10h
+
+				mov ah,2
+				mov bl,0
+				mov dx,0a1Eh
+				int 10h
+
+				mov ah,9
+				mov dx ,offset msg1
+				int 21h
+				
+        
+b1:				mov ah,2
+				mov bl,0					
+				mov dx,0b1Eh
+				int 10h
+				
+				
+
+				mov ah,0AH
+			    mov dx,offset User1
+			    int 21h        
+                
+              
+                cmp user1+2,65d
+				jb  fx1
+                cmp user1+2,122d
+                ja fx1
+                cmp user1+2,90d
+                ja  chk1
+                
+                jmp cont
+                
+chk1:         cmp user1+2,97d
+                jb  fx1
+                jmp cont
+                
+fx1:           
+                mov ah,2
+				mov bl,0
+				mov dx,0b1Eh
+				int 10h
+                mov ah,9
+				mov dx ,offset spaces
+				int 21h
+                jmp b1
+                                 
+    
+cont:	    mov ah,2
+				mov bl,0					
+				mov dx,0c1Eh
+				int 10h
+				 
+				mov ah,9
+				mov dx , offset msg2
+				int 21h
+
+b2:				mov ah,2
+				mov bl,0					
+				mov dx,0d1Eh
+				int 10h
+
+				mov ah,0AH
+			    mov dx,offset User2
+			    int 21h
+                cmp user2+2,65d
+				jb  fx2
+                cmp user2+2,122d
+                ja fx2
+                cmp user2+2,90d	
+                ja  chk2
+                jmp E
+                
+chk2:         cmp user2+2,97d
+                jb  fx2
+                jmp E
+ 
+                
+fx2:           
+                mov ah,2
+				mov bl,0
+				mov dx,0d1Eh
+				int 10h
+                mov ah,9
+				mov dx ,offset spaces
+				int 21h
+                jmp b2
+                                                      
+ 
+ E:
+ 
+			 mov ch, 32
+			 mov ah, 1
+			 int 10h 
+
+Endm WriteNames
