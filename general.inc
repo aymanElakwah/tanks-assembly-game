@@ -5,3 +5,20 @@ exitGame macro
     mov ax, 4c00h ; exit to operating system.
     int 21h
 endm exitGame
+
+users macro
+    mov dl, 4
+    mov dh, 0
+    mov ah, 2
+    int 10h
+    mov dx, offset player1Name
+    mov ah, 9
+    int 21h
+    mov dl, 4
+    mov dh, 12
+    mov ah, 2
+    int 10h
+    mov dx, offset player2Name
+    mov ah, 9
+    int 21h
+endm users

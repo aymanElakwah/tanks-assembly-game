@@ -1,9 +1,11 @@
+include general.inc
 include mp.inc
 include akwah.inc
 include init.inc
 include Macros.inc
 include Bullet.inc
 .model small
+;.386
 .stack 64
 
 .data
@@ -11,10 +13,12 @@ player1 label byte
 player1x db 21
 player1y db 0
 player1Ori db 16
+player1Name db 17 dup('$')
 player2 label byte
 player2x db 76
 player2y db 22
 player2Ori db 17
+player2Name db 17 dup('$')
 
 
 pnum db  ?          ;Player number = pnum (0 or 1)

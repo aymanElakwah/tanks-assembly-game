@@ -60,6 +60,7 @@ loadmap MACRO
         mov al,'Ù'
         int 10h
 	UpadateHearts 2
+	users
 ENDM loadmap
 
 
