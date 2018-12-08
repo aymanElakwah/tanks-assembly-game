@@ -5,6 +5,7 @@ include init.inc
 include Macros.inc
 include Bullet.inc
 .model small
+;.386
 .stack 64
 
 .data
@@ -13,13 +14,13 @@ player1x db 21
 player1y db 0
 player1Ori db 16
 user1 db 16, ?
-player1Name db 16 dup('$')
+player1Name db 17 dup('$')
 player2 label byte
 player2x db 76
 player2y db 22
 player2Ori db 18         
 user2 db 16, ?
-player2Name db 16 dup('$')
+player2Name db 17 dup('$')
 
 pausedStatus db 'The game is paused$'
 emptyStatus db 79 dup (' '), '$'

@@ -108,7 +108,7 @@ nwpost:
 	je move
 	cmp al, 250
 	je move
-dead:	
+dead:
 	Collide
 borders:
 	mov bullet,0ffh
@@ -136,10 +136,10 @@ drawblt macro bullet
 	mov ah,2
 	mov dl,250
 	int 21h
-endm drawblt		
+endm drawblt
 
 Collide Macro
-	LOCAL E, Update1, Update2, Destroy, Game1, Gamme2,lines,hhh,linnes2,hh2 
+	LOCAL E, Update1, Update2, Destroy, Game1, Gamme2,lines,hhh,linnes2,hh2
 	cmp al,178			;if (Block) destroy
 	jz destroy
 	cmp ah,0EH			;if (player1) update1 //check by position
@@ -174,13 +174,13 @@ Collide Macro
 	mov ori,dl
 	DrawPlayer
 	Destroy_Sound
-	jmp E				
+	jmp E
 
 	Update2:
 	mov ah,2			;destroy from its current position
 	int 10h
 	mov dl,' '
-	int 21h	
+	int 21h
 	mov cl,lives2			;check for remaining lives & decrement it
 	dec cl
 	jz Gamme2			;if dead, lives = 0, second player lost
@@ -198,25 +198,25 @@ Collide Macro
 	mov ori,dl
 	DrawPlayer
 	Destroy_Sound
-	jmp E			
+	jmp E
 
 	Game1:
     mov ah,0
     mov al,13h
-    int 10h 
+    int 10h
 	Destroy_Sound
        mov si,0
     lines:
     mov ax,0fffh
  hhh: dec ax
       cmp ax,0
-      jne hhh  
+      jne hhh
      mov cx,50
     mov dx,105
-    mov al,0ch  
+    mov al,0ch
     mov ah,0ch
-    add dx,si 
-    int 10h  
+    add dx,si
+    int 10h
     add cx,si
     int 10h
     sub dx,si
@@ -230,16 +230,16 @@ Collide Macro
     add dx,si
     int 10h
     add dx,si
-    int 10h  
+    int 10h
     inc bp
     add si,2
     cmp bp,1000
     jne lines
 	mov ah,2
 	mov dx,0A0Ah
-	int 10h 
+	int 10h
 	mov ah, 9
-	mov dx, offset player1Name
+	mov dx, offset user2+2
 	int 21h
 	mov ah, 9
 	mov dx, offset won
@@ -251,7 +251,7 @@ Collide Macro
 	Gamme2:
     mov ah,0
     mov al,13h
-    int 10h 
+    int 10h
 	Destroy_Sound
        mov si,0
     linnes2:
@@ -259,13 +259,13 @@ Collide Macro
  hh2:
 	dec ax
       cmp ax,0
-      jne hh2  
+      jne hh2
      mov cx,50
     mov dx,105
-    mov al,0ch  
+    mov al,0ch
     mov ah,0ch
-    add dx,si 
-    int 10h  
+    add dx,si
+    int 10h
     add cx,si
     int 10h
     sub dx,si
@@ -279,16 +279,16 @@ Collide Macro
     add dx,si
     int 10h
     add dx,si
-    int 10h  
+    int 10h
     inc bp
     add si,2
     cmp bp,1000
     jne linnes2
 	mov ah,2
 	mov dx,0A0Ah
-	int 10h 
+	int 10h
 	mov ah, 9
-	mov dx, offset player2Name
+	mov dx, offset user1+2
 	int 21h
 	mov ah, 9
 	mov dx, offset won
@@ -306,12 +306,12 @@ Collide Macro
 	mov al,' ' ;
 	mov cx,1 ;
 	mov bl,07h;
-	int 10h 
+	int 10h
 	Destroy_Sound
 
-	
+
 	E:
-	
+
 ENDM Collide
 
 
@@ -327,7 +327,7 @@ Destroy_Sound Macro
                                 ;  for middle C.
         out     42h, al         ; Output low byte.
         mov     al, ah          ; Output high byte.
-        out     42h, al 
+        out     42h, al
         in      al, 61h         ; Turn on note (get value from
                                 ;  port 61h).
         or      al, 00000011b   ; Set bits 1 and 0.
