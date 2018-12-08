@@ -1,6 +1,6 @@
 include general.inc
 include mp.inc
-include akwah.inc
+include input.inc
 include init.inc
 include Macros.inc
 include Bullet.inc
