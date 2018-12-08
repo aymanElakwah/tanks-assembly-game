@@ -91,7 +91,7 @@ cont3:
 	je chk4
 	jne mend
 chk4:
-	cmp dl,79
+	cmp dl,78
 	je borders
 	add dl,1					;; next move
 	jmp nwpost
