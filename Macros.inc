@@ -357,7 +357,8 @@ fx1:            notify firstLetter
                 jmp b1
                                  
     
-cont:	    mov ah,2
+cont:	        notify emptyStatus
+                mov ah,2
 				mov bl,0					
 				mov dx,0c1Eh
 				int 10h

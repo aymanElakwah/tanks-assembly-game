@@ -23,7 +23,7 @@ user2 db 16, ?
 player2Name db 17 dup('$')
 
 pausedStatus db 'The game is paused$'
-emptyStatus db 79 dup (' '), '$'
+emptyStatus db 78 dup (' '), '$'
 firstLetter db 'The first letter of the name should be a letter$'
 
 
