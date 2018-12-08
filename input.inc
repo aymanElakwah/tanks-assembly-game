@@ -80,6 +80,7 @@ draw macro ; this macro is responsible for the players at initinal positions
 
 pauseGame macro
     local pause_game
+    pauseSound
     notify pausedStatus
     pause_game:
     mov ah, 1
@@ -90,6 +91,7 @@ pauseGame macro
     cmp ah, 1Ch
     jnz pause_game
     notify emptyStatus
+    pauseSound
 endm pauseGame
 
 mainGameLoop macro
@@ -162,3 +164,44 @@ mainGameLoop macro
     mov bp, 10000
     finish:
 endm mainGameLoop
+
+pauseSound macro
+	local delay1,delay2
+        mov     al, 182         ; Prepare the speaker for the
+        out     43h, al         ;  note.
+        mov     ax, 4560        ; Frequency number (in decimal)
+                                ;  for middle C.
+        out     42h, al         ; Output low byte.
+        mov     al, ah          ; Output high byte.
+        out     42h, al
+        xchg ax, dx
+        in      al, 61h         ; Turn on note (get value from
+                                ;  port 61h).
+        or      al, 00000011b   ; Set bits 1 and 0.
+        out     61h, al         ; Send new value.
+        mov     bx, 15			; Pause for duration of note.
+        mov al, 182
+delay1:
+        xchg ax, dx
+        sub ax, 10
+        out     42h, al         ; Output low byte.
+        mov     al, ah          ; Output high byte.
+        out     42h, al
+        in      al, 61h
+        xchg ax, dx
+        in      al, 61h         ; Turn on note (get value from
+                                ;  port 61h).
+        or      al, 00000011b   ; Set bits 1 and 0.
+        out     61h, al
+        mov     cx, 65535
+delay2:
+        dec     cx
+        jne     delay2
+        dec     bx
+        jne     delay1
+        in      al, 61h         ; Turn off note (get value from
+                                ;  port 61h).
+        and     al, 11111100b   ; Reset bits 1 and 0.
+        out     61h, al         ; Send new value
+
+  ENDM Destroy_Sound
