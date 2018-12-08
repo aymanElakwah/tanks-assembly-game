@@ -327,22 +327,19 @@ b1:				mov ah,2
 				int 10h
 				
 				
-
-				mov ah,0AH
-			    mov dx,offset User1
-			    int 21h        
+                readInput user1
                 
               
-                cmp user1+2,65d
+                cmp player1Name,65d
 				jb  fx1
-                cmp user1+2,122d
+                cmp player1Name,122d
                 ja fx1
-                cmp user1+2,90d
+                cmp player1Name,90d
                 ja  chk1
                 
                 jmp cont
                 
-chk1:         cmp user1+2,97d
+chk1:         cmp player1Name,97d
                 jb  fx1
                 jmp cont
                 
@@ -372,18 +369,16 @@ b2:				mov ah,2
 				mov dx,0d1Eh
 				int 10h
 
-				mov ah,0AH
-			    mov dx,offset User2
-			    int 21h
-                cmp user2+2,65d
+				readInput user2
+                cmp player2Name,65d
 				jb  fx2
-                cmp user2+2,122d
+                cmp player2Name,122d
                 ja fx2
-                cmp user2+2,90d	
+                cmp player2Name,90d	
                 ja  chk2
                 jmp E
                 
-chk2:         cmp user2+2,97d
+chk2:         cmp player2Name,97d
                 jb  fx2
                 jmp E
  

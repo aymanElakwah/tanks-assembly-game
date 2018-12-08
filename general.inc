@@ -32,3 +32,15 @@ notify macro string
     mov ah, 9
     int 21h
 endm status
+
+readInput macro memory
+    push bx
+    mov dx, offset memory
+    mov ah, 0Ah
+    int 21h
+    mov bh, 0
+    mov bl, memory + 1
+    add bx, 2
+    mov memory[bx], '$'
+    pop bx
+endm readInput
