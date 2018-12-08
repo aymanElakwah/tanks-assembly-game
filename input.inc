@@ -175,25 +175,20 @@ pauseSound macro
         mov     al, ah          ; Output high byte.
         out     42h, al
         xchg ax, dx
+        mov     bx, 3			; Pause for duration of note.
+delay1:
         in      al, 61h         ; Turn on note (get value from
                                 ;  port 61h).
         or      al, 00000011b   ; Set bits 1 and 0.
         out     61h, al         ; Send new value.
-        mov     bx, 15			; Pause for duration of note.
-        mov al, 182
-delay1:
+        mov     cx, 65535
         xchg ax, dx
-        sub ax, 10
+        sub ax, 500
         out     42h, al         ; Output low byte.
         mov     al, ah          ; Output high byte.
         out     42h, al
-        in      al, 61h
         xchg ax, dx
-        in      al, 61h         ; Turn on note (get value from
-                                ;  port 61h).
-        or      al, 00000011b   ; Set bits 1 and 0.
-        out     61h, al
-        mov     cx, 65535
+
 delay2:
         dec     cx
         jne     delay2
