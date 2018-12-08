@@ -288,7 +288,7 @@ checkgamemode:  cmp dh,0fh
 				jnz again
 
 
-Exit:					
+Exit:           exitGame					
 
 normalmode:
 		
