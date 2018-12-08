@@ -346,7 +346,7 @@ chk1:         cmp user1+2,97d
                 jb  fx1
                 jmp cont
                 
-fx1:           
+fx1:            notify firstLetter
                 mov ah,2
 				mov bl,0
 				mov dx,0b1Eh
@@ -387,7 +387,7 @@ chk2:         cmp user2+2,97d
                 jmp E
  
                 
-fx2:           
+fx2:            notify firstLetter
                 mov ah,2
 				mov bl,0
 				mov dx,0d1Eh

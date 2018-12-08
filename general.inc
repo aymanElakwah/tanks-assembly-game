@@ -24,7 +24,7 @@ users macro
 endm users
 
 notify macro string
-    mov dl, 0
+    mov dl, 1
     mov dh, 24
     mov ah, 2
     int 10h
