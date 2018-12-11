@@ -1,4 +1,5 @@
 include general.inc
+include network.inc
 include mp.inc
 include input.inc
 include init.inc
@@ -26,7 +27,11 @@ pausedStatus db 'The game is paused$'
 emptyStatus db 78 dup (' '), '$'
 firstLetter db 'The first letter of the name should be a letter$'
 
-
+playerNumber db 1 ; The number of player on this device
+key1 db ? ;player 1 key
+isDir1 db ? ; is key 1 a direction key?
+key2 db ? ;player 2 key                
+isDir2 db ? ; is key 2 a direction key?
 pnum db  ?          ;Player number = pnum (0 or 1)
 generalPlayer label byte
 posx  db  ?        ;Positon x of general player

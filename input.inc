@@ -4,7 +4,7 @@ mem2mem macro index ;bx = si ; put the byte located at si in bx (memory)
 endm mem2mem
 
 translateKeyPress macro ;input:scan code in ah/output:symbol in ah, al: playerNumber
-local right, down, left, w, a, s, d, notDirectionKey
+local right, down, left, w, a, s, d, notDirectionKey, finish
     ;48 up, 4D right, 50 down, 4B left
     mov al, 1; player 1
     cmp ah, 48h ; is it up?
@@ -23,28 +23,6 @@ local right, down, left, w, a, s, d, notDirectionKey
     jmp finish
     left:
     cmp ah, 4Bh ; is it left?
-    jnz w
-    mov ah, 11h
-    jmp finish
-    ; w, a, s, d
-    w:
-    mov al, 2 ; player 2
-    cmp ah, 11h
-    jnz d
-    mov ah, 1Eh
-    jmp finish
-    d:
-    cmp ah, 20h
-    jnz s
-    mov ah, 10h
-    jmp finish
-    s:
-    cmp ah, 1Fh
-    jnz a
-    mov ah, 1Fh
-    jmp finish
-    a:
-    cmp ah, 1Eh
     jnz notDirectionKey
     mov ah, 11h
     jmp finish
@@ -88,81 +66,132 @@ pauseGame macro
     jz pause_game
     mov ah, 0
     int 16h
-    cmp ah, 1Ch
+    cmp ah, 3Bh
     jnz pause_game
     notify emptyStatus
     pauseSound
 endm pauseGame
 
-mainGameLoop macro
-    local player2Check, continue, checkBuild, checkBuild2, checkFire1, checkFire2, finish, pause, notExit
-    ;delay
-    dec bp
-    jnz finish
-    ; get input from user
+getKeys macro
+    local mend, other_player, p2, p2_receive_only
     mov ah, 1
     int 16h
-    jz continue ; if no input continue
+    jz other_player ; if no input continue
     ; clear buffer
     mov ah, 0
     int 16h
-    cmp ah, 1 ;is ESC?
-    jnz notExit
-    exitGame
-    jz finish
-    notExit:
-    translateKeyPress ; translate the key pressed to get the Orintation
-    mov pnum, al
-    cmp al, 1 ; is player1?
-    jnz player2Check
+    cmp playerNumber, 1
+    jnz p2
+    ; I'm player 1
+    mov key1, ah
+    mov isDir1, al
+    send key1
+    ;send isDir1
+    receive key2
+    ;receive isDir2
+    ;receive2 key2, isDir2
+    jmp mend
+    p2:
+    ; I'm player 2
+    mov key2, ah
+    mov isDir2, al
+    send key2
+    ;send isDir2
+    receive key1
+    ;receive isDir1
+    ;receive2 key1, isDir1
+    jmp mend
+    other_player:
+    cmp playerNumber, 1
+    jnz p2_receive_only
+    ; I'm player 1, He's player 2
+    mov key1, 0
+    receive key2
+    ;receive isDir2
+    ;receive2 key2, isDir2
+    jmp mend
+    p2_receive_only:
+    ; I'm player 2, He's player 1
+    mov key2, 0
+    receive key1
+    ;receive isDir1
+    ;receive2 key1, isDir1
+    mend:
+    mov ah, key1
+    translateKeyPress
+    mov key1, ah
+    mov isDir1, al
+    mov ah, key2
+    translateKeyPress
+    mov key2, ah
+    mov isDir2, al
+endm getKeys
+
+mainGameLoop macro
+    local mend, p2, direction_key1, build1, fire1, pause
+    getKeys
+    cmp key1, 0
+    jz p2
+    cmp isDir1, 1
+    jz direction_key1
+    cmp key1, 10h
+    jz build1
+    cmp key1, 11h
+    jz fire1
+    cmp key1, 3Bh
+    jz pause
+    jmp p2; error: shouldn't reach this line of code
+    direction_key1:
+    mov pnum, 1
+    mov ah, key1
     mov player1Ori, ah
     mov si, offset player1
     mov bx, offset generalPlayer
     move ; move player1
-    jmp continue
-    player2Check:
-    cmp al, 2 ; is player2?
-    jnz checkBuild
-    mov player2Ori, ah
-    mov si, offset player2
-    mov bx, offset generalPlayer
-    move ; move player2
-    jmp continue
-    checkBuild:
-    cmp ah, 35h ; is player1 trying to build?
-    jnz checkBuild2
+    jmp p2
+    build1:
     mov dl, player1x
     mov dh, player1y
     mov ch, player1Ori
     build
-    jmp continue
-    checkBuild2:
-    cmp ah, 12h ; is player2 trying to build?
-    jnz checkFire1
+    jmp p2
+    fire1:
+    nwblt blt1, player1x
+    p2:
+    cmp key2, 0
+    jz mend
+    cmp isDir2, 1
+    jz direction_key2
+    cmp key2, 10h
+    jz build2
+    cmp key2, 11h
+    jz fire2
+    cmp key2, 3Bh
+    jz pause
+    jmp mend ; error shouldn't reach this line of code
+    direction_key2:
+    mov pnum, 2
+    mov ah, key2
+    mov player2Ori, ah
+    mov si, offset player2
+    mov bx, offset generalPlayer
+    move ; move player2
+    jmp mend
+    build2:
     mov dl, player2x
     mov dh, player2y
     mov ch, player2Ori
     build
-    jmp continue
-    checkFire1:
-    cmp ah, 34h ; is player1 trying to fire?
-    jnz checkFire2
-    nwblt blt1, player1x
-    jmp continue
-    checkFire2:
-    cmp ah, 13h ; is player2 trying to fire?
-    jnz pause
+    jmp mend
+    fire2:
     nwblt blt2, player2x
-    jmp continue
+    jmp mend
     pause:
-    cmp ah, 1Ch
-    jnz continue
     pauseGame
-    continue:
+    mend:
     chkmovblt blt1
     chkmovblt blt2
-    mov bp, 10000
-    finish:
+    delay 10000
 endm mainGameLoop
 
 pauseSound macro

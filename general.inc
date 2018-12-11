@@ -44,3 +44,10 @@ readInput macro memory
     mov memory[bx], '$'
     pop bx
 endm readInput
+
+delay macro ms
+    mov cx, 0
+    mov dx, ms
+    mov ah, 86h
+    int 15h
+endm delay
