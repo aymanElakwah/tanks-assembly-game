@@ -25,15 +25,15 @@ MovePlayer MACRO
 	cmp si,4
 	jz Drw
 	inc si
-	cmp cl,conf+si
+	cmp cl,conf[si]
 	jnz L
 
 	mov ah,2
-	mov bl,chngx+si
+	mov bl,chngx[si]
 	mov bh,0
 	mov dl,posx
 	add dl,bl
-	mov bl,chngy+si
+	mov bl,chngy[si]
 	mov dh,posy
 	add dh,bl
 	int 10h
@@ -62,11 +62,11 @@ MovePlayer MACRO
 	mov cx,1
 	mov bx,7
 	int 10h
-	mov bl,chngx+si
+	mov bl,chngx[si]
 	mov bh,0
 	mov dl,posx
 	add dl,bl
-	mov bl,chngy+si
+	mov bl,chngy[si]
 	mov dh,posy
 	add dh,bl
 	mov posx,dl

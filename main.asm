@@ -6,7 +6,7 @@ include init.inc
 include Macros.inc
 include Bullet.inc
 .model small
-;.386
+.386
 .stack 64
 
 .data
