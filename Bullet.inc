@@ -206,12 +206,19 @@ Collide Macro
     int 10h
 	Destroy_Sound
        mov si,0
+    mov bp, 0
     lines:
-    mov ax,0fffh
- hhh: dec ax
-      cmp ax,0
-      jne hhh
-     mov cx,50
+    delay 3000
+    mov ah,2
+	mov dx, 0C0Eh
+	int 10h
+	mov ah, 9
+	mov dx, offset player2Name
+	int 21h
+	mov ah, 9
+	mov dx, offset won
+	int 21h
+    mov cx,50
     mov dx,105
     mov al,0ch
     mov ah,0ch
@@ -233,17 +240,8 @@ Collide Macro
     int 10h
     inc bp
     add si,2
-    cmp bp,1000
+    cmp bp,2000
     jne lines
-	mov ah,2
-	mov dx,0A0Ah
-	int 10h
-	mov ah, 9
-	mov dx, offset user2+2
-	int 21h
-	mov ah, 9
-	mov dx, offset won
-	int 21h
 	mov ah,0
 	int 16h
 	jmp thebegining
@@ -253,14 +251,20 @@ Collide Macro
     mov al,13h
     int 10h
 	Destroy_Sound
-       mov si,0
+    mov si,0
+    mov bp, 0
     linnes2:
-    mov ax,0fffh
- hh2:
-	dec ax
-      cmp ax,0
-      jne hh2
-     mov cx,50
+    delay 3000
+    mov ah,2
+	mov dx, 0C0Eh
+	int 10h
+	mov ah, 9
+	mov dx, offset player1Name
+	int 21h
+	mov ah, 9
+	mov dx, offset won
+	int 21h
+    mov cx,50
     mov dx,105
     mov al,0ch
     mov ah,0ch
@@ -282,17 +286,8 @@ Collide Macro
     int 10h
     inc bp
     add si,2
-    cmp bp,1000
+    cmp bp,2000
     jne linnes2
-	mov ah,2
-	mov dx,0A0Ah
-	int 10h
-	mov ah, 9
-	mov dx, offset user1+2
-	int 21h
-	mov ah, 9
-	mov dx, offset won
-	int 21h
 	mov ah,0
 	int 16h
 	jmp thebegining
