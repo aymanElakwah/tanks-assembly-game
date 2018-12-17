@@ -39,7 +39,8 @@ finish:
 ENDM chkmovblt
 
 movblt MACRO bullet
-	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead,borders
+	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead,borders,mirror,reverseDown,reverseUp,reverseLeft,reverseRight
+
 
 	mov dl,bullet				;;get bullet current position in dx
 	mov dh,bullet+1
@@ -60,7 +61,7 @@ cont4:
 	je chk1
 	jne cont
 chk1:
-	cmp dh,0		;; check border
+	cmp dh,0					;; check border
 	je borders
 	sub dh,1					;; next move
 	jmp nwpost
@@ -71,13 +72,13 @@ cont:
 	je chk2
 	jne cont2
 chk2:
-	cmp dh,23             ;; check border
+	cmp dh,23					;; check border
 	je borders
 	add dh,1					;; next move
 	jmp nwpost
 
 cont2:
-	cmp bullet+2,17			;;if two move left
+	cmp bullet+2,17				;;if two move left
 	je chk3
 	jne cont3
 chk3:
@@ -104,16 +105,53 @@ nwpost:
 	mov bh,0
 	int 10h
 
-	cmp al, ' '                   ;;the position is free
+	cmp al, ' '                 ;;the position is free
 	je move
 	cmp al, 250
 	je move
+	cmp al ,15
+	je mirror
 dead:
 	Collide
 borders:
 	mov bullet,0ffh
 	mov bullet+1,0ffH
 	jmp mend
+
+mirror:
+		push ax
+		cmp bullet+2,30
+		je reverseDown
+		cmp bullet+2,31
+		je reverseUp
+		cmp bullet+2,16
+		je reverseLeft
+		cmp bullet+2,17
+		je reverseRight
+		jmp  mend
+
+reverseDown:
+			mov al,31
+			mov bullet+2,al
+			pop ax
+			jmp mend
+reverseUp:
+			mov al,30
+			mov bullet+2,al
+			pop ax
+			jmp mend
+
+reverseLeft:
+			mov al,17
+			mov bullet+2,al
+			pop ax
+			jmp mend
+
+reverseRight:
+			mov al,16
+			mov bullet+2,al
+			pop ax
+			jmp mend
 
 move:
 	mov bullet + 1, dh

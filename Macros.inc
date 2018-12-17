@@ -1,5 +1,4 @@
 loadmap MACRO
-
 	mov ah,2
 	mov dx,0
 	mov bh,0
@@ -44,7 +43,44 @@ loadmap MACRO
         int 10h
 		UpadateHearts 2
         users
+		loadbombs
 ENDM loadmap
+
+
+loadbombs MACRO
+		  local again,delay
+          mov si,2
+          mov di,3
+again:    dec di
+          mov ah,2ch
+          int 21h
+          mov ah,0
+          mov al,dl
+          mov dl,62d
+          div dl
+          mov dl,ah
+          add dl,18d
+          mov ax,si
+          mov dh,al
+          mov ah,2
+          int 10h
+          mov dl,0Fh
+          int 21h
+		  mov ax,0ffffh
+delay:    
+		  dec ax
+		  cmp ax,0
+		  jnz delay
+          cmp di,0
+          jnz again
+          mov di,2
+          inc si 
+          cmp si,22d
+          jnz again 
+
+		  mov si,0
+		  mov di,0
+ENDM loadbombs
 
 
 ;---------------------------------------------------------------------------------------------------------------
