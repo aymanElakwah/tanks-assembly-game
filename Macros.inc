@@ -6,7 +6,7 @@ loadmap MACRO
 	mov dx,offset map
 	mov ah, 9
 	int 21h
-        
+        rand
         ;drawing flag of first player and hearts
         mov dx,0012h
         mov ah,2
@@ -43,19 +43,36 @@ loadmap MACRO
         int 10h
 		UpadateHearts 2
         users
-		loadbombs
+		loadmirror
 ENDM loadmap
 
 
-loadbombs MACRO
-		  local again,delay
+
+rand macro
+local again,delay
+            mov si,2
+again:
+			mov ah,2ch
+			int 21h
+			mov random[si],dl
+			inc si
+			mov ax,0ffffh
+delay:		dec ax
+			cmp ax,0
+			jnz delay
+			cmp si,22
+			jne again
+ENDM rand
+
+loadmirror MACRO
+		  local again
+		  
+		  
           mov si,2
           mov di,3
 again:    dec di
-          mov ah,2ch
-          int 21h
           mov ah,0
-          mov al,dl
+          mov al,random[si];
           mov dl,62d
           div dl
           mov dl,ah
@@ -66,22 +83,15 @@ again:    dec di
           int 10h
           mov dl,0Fh
           int 21h
-		  mov ax,0ffffh
-delay:    
-		  dec ax
-		  cmp ax,0
-		  jnz delay
           cmp di,0
           jnz again
           mov di,2
           inc si 
           cmp si,22d
-          jnz again 
-
+          jnz again
 		  mov si,0
 		  mov di,0
-ENDM loadbombs
-
+ENDM loadmirror
 
 ;---------------------------------------------------------------------------------------------------------------
 
