@@ -57,21 +57,159 @@ draw macro ; this macro is responsible for the players at initinal positions
     endm draw
 
 pauseGame macro
-    local pause_game
+    local pause_game, cont, AGAIN, E, ext
     pauseSound
     notify pausedStatus
     pause_game:
+    mov dx , 3FDH		; Line Status Register
+    AGAIN:  	In al , dx 			;Read Line Status
+  	AND al , 00100000b
+  	JZ AGAIN
     mov ah, 1
     int 16h
-    jz pause_game
+    jz E
     mov ah, 0
     int 16h
     cmp ah, 3Bh
-    jnz pause_game
+    jz cont
+    ;-------------CHAT--------------
+    push ax         ;Displaying at send
+  	mov dl,sendx
+    mov dh,sendy
+    mov ah,2
+    int 10h
+  	Disp 2,9,13,16
+  	mov ah,3h
+    mov bh,0h
+    int 10h
+  	mov sendx,dl
+  	mov sendy,dh
+  	pop ax
+    mov dx , 3F8H		; Transmit data register
+  	out dx , al
+    E:
+    mov dx , 3FDH		; Line Status Register
+    in al , dx 
+    AND al , 1
+    JZ pause_game
+    mov dx , 03F8H
+  	in al , dx
+    cmp al,254
+    jz ext
+    mov dl,recx    ;Displaying at receive
+    mov dh,recy
+    mov ah,2
+    int 10h
+  	Disp 2,9,13,16
+  	mov ah,3h
+    mov bh,0h
+    int 10h
+  	mov recx,dl
+  	mov recy,dh
+    jmp pause_game
+    ;-----------END CHAT------------------
+    cont:
+    mov al,254
+    mov dx , 3F8H		; Transmit data register
+  	out dx , al
+    ext:
     notify emptyStatus
     pauseSound
 endm pauseGame
 
+Disp MACRO ymin1,ymax1,ymin2,x
+    LOCAL D, backspace, enter, S1, S2
+    mov bl,al
+    cmp bl,8
+    jz backspace
+    cmp bl,13
+    jz enter
+    cmp bl,9
+    jz D
+    mov ah,3h
+    mov bh,0h
+    int 10h
+    cmp dl,79
+    jz D
+    mov ah,8
+    mov bh,0
+    int 10h
+    cmp al,179
+    jz D
+
+    mov ah,2
+    mov dl,bl
+    int 21h
+    jmp D    
+
+    backspace: ;if pressed back space 
+    mov ah,3h
+    mov bh,0h
+    int 10h
+    cmp dl,0
+    jz D
+    dec dl
+    mov ah,2
+    int 10h
+    mov al,' ' ;write space in the previous position
+        
+    mov ah,2
+    mov dl,al
+    int 21h
+
+    mov ah,3h
+    mov bh,0h
+    int 10h
+    dec dl
+    mov ah,2  ;set cursor at this position
+    int 10h 
+    jmp D
+
+    enter:    ;if pressed enter
+    mov ah,3h
+    mov bh,0h
+    int 10h
+    cmp dh,ymax1
+    jz S1
+    cmp dh,23
+    jz S2
+    inc dh
+    mov dl,0
+    mov ah,2
+    int 10h   ;set cursor at the next line
+    jmp D
+    
+    S1:
+    mov ah,6 ; function 6
+    mov al,1 ; scroll by 1 line
+    mov bh,7 ; normal video attribute
+    mov ch,ymin1 ; upper left Y
+    mov cl,0 ; upper left X
+    mov dh,ymax1 ; lower right Y
+    mov dl,x ; lower right X
+    int 10h
+    mov dl,0
+    mov bx,0
+    mov ah,2
+    int 10h 
+    jmp D
+    
+    S2:
+    mov ah,6 ; function 6
+    mov al,1 ; scroll by 1 line
+    mov bh,7 ; normal video attribute
+    mov ch,ymin2 ; upper left Y
+    mov cl,0 ; upper left X
+    mov dh,23 ; lower right Y
+    mov dl,x ; lower right X
+    int 10h
+    mov dl,0
+    mov bx,0
+    mov ah,2
+    int 10h
+    
+    D:
+ENDM Disp
 getKeys macro
     local mend, other_player, p2, p2_receive_only
     mov ah, 1
