@@ -13,4 +13,17 @@ mov blt1,0ffh
     mov player2x,76
     mov player2y,22  
     mov player2ori,17
+	cmp playerNumber,0
+	jz ply1
+	mov	sendx,0
+	mov	sendy,13
+	mov	recx,0
+	mov	recy,2
+
+		jmp E
+ply1:	mov	sendx,0
+		mov	sendy,2
+		mov	recx,0
+		mov	recy,13
+E:
 	endm initialize

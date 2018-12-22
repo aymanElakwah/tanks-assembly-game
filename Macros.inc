@@ -376,7 +376,7 @@ Endm loadinterface
 
 
 loadchatting macro
-
+	LOCAL ply1, L, E, AGAIN, cont, ext
 	mov ah,0
 	mov al,3
 	int 10h
@@ -396,7 +396,7 @@ loadchatting macro
 	int 21h
 
 
-	mov dh,12
+	mov dh,11
 	mov dl,0
 	mov ah,2
 	int 10h
@@ -406,11 +406,72 @@ loadchatting macro
 	mov cx,79 ;5 times
 	mov bl,00Fh ;Green (A) on white(F) background
 	int 10h
-
-		
-
 	
+	cmp playerNumber,0
+	jz ply1
+	mov	sendx,0
+	mov	sendy,13
+	mov	recx,0
+	mov	recy,1
 
+	jmp L
+	ply1:	mov	sendx,0
+		mov	sendy,1
+		mov	recx,0
+		mov	recy,13
+	L:
+    	mov dx , 3FDH		; Line Status Register
+    	AGAIN:  	In al , dx 			;Read Line Status
+  	AND al , 00100000b
+  	JZ AGAIN
+    	mov ah, 1
+    	int 16h
+    	jz E
+    	mov ah, 0
+    	int 16h
+    	cmp ah, 3Bh
+    	jz cont
+    	;-------------CHAT--------------
+    	push ax         ;Displaying at send
+  	mov dl,sendx
+    	mov dh,sendy
+    	mov ah,2
+    	int 10h
+  	Disp 1,10,13,79
+  	mov ah,3h
+    	mov bh,0h
+    	int 10h
+  	mov sendx,dl
+  	mov sendy,dh
+  	pop ax
+    	mov dx , 3F8H		; Transmit data register
+  	out dx , al
+    	E:
+    	mov dx , 3FDH		; Line Status Register
+    	in al , dx 
+    	AND al , 1
+    	JZ L
+    	mov dx , 03F8H
+  	in al , dx
+    	cmp al,254
+    	jz ext
+    	mov dl,recx    ;Displaying at receive
+    	mov dh,recy
+    	mov ah,2
+    	int 10h
+  	Disp 1,10,13,79
+  	mov ah,3h
+    	mov bh,0h
+    	int 10h
+  	mov recx,dl
+  	mov recy,dh
+    	jmp L
+    	;-----------END CHAT------------------
+    	cont:
+    	mov al,254
+    	mov dx , 3F8H		; Transmit data register
+  	out dx , al
+    	ext:jmp thebegining
 ENDM loadchatting
       
 
