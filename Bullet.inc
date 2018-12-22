@@ -12,7 +12,7 @@ nwblt MACRO bullet,position
 	jne mend
 adblt:                 ;;setting new position and direction
 	mov al,position
-    	mov [bx],al
+    mov [bx],al
 	mov al,position+1
 	mov [bx+1],al
 	mov al,position+2
@@ -39,8 +39,7 @@ finish:
 ENDM chkmovblt
 
 movblt MACRO bullet
-	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead,borders,mirror,reverseDown,reverseUp,reverseLeft,reverseRight
-
+	local mend,nwpost,move,chk1,chk2,chk3,chk4,cont,cont2,cont3,cont4,dead,borders,mirror,reverseDown,reverseUp,reverseLeft,reverseRight,kill,seeother
 
 	mov dl,bullet				;;get bullet current position in dx
 	mov dh,bullet+1
@@ -109,7 +108,7 @@ nwpost:
 	je move
 	cmp al, 250
 	je move
-	cmp al ,15
+	cmp al ,42
 	je mirror
 dead:
 	Collide
@@ -134,25 +133,25 @@ reverseDown:
 			mov al,31
 			mov bullet+2,al
 			pop ax
-			jmp mend
+			jmp move
 reverseUp:
 			mov al,30
 			mov bullet+2,al
 			pop ax
-			jmp mend
+			jmp move
 
 reverseLeft:
 			mov al,17
 			mov bullet+2,al
 			pop ax
-			jmp mend
+			jmp move
 
 reverseRight:
 			mov al,16
 			mov bullet+2,al
 			pop ax
-			jmp mend
-
+			jmp move
+			
 move:
 	mov bullet + 1, dh
 	mov bullet, dl
@@ -341,7 +340,6 @@ Collide Macro
 	mov bl,07h;
 	int 10h
 	Destroy_Sound
-
 
 	E:
 

@@ -1,12 +1,18 @@
 loadmap MACRO
+	local level0,level1,next
 	mov ah,2
 	mov dx,0
 	mov bh,0
 	int 10h
-	mov dx,offset map
-	mov ah, 9
-	int 21h
-        rand
+	cmp level,0
+	jz level0
+	jnz level1
+level0:	mov dx,offset map1
+		jmp next
+level1: mov dx,offset map2
+next:	mov ah, 9
+		int 21h
+																				;rand
         ;drawing flag of first player and hearts
         mov dx,0012h
         mov ah,2
@@ -43,7 +49,7 @@ loadmap MACRO
         int 10h
 		UpadateHearts 2
         users
-		loadmirror
+																				;loadmirror
 ENDM loadmap
 
 
@@ -218,7 +224,7 @@ ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
 
 loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode ; 13h==chatting mode ;  14==Exit
-local normalmode,again,check1,check2,continue,makedelay1,makedelay2,wholelogo,draw,Exit
+local normalmode,again,check1,check2,continue,makedelay1,makedelay2,wholelogo,draw,Exit,advancemode,here,chatting
 push ax
 push dx
 push cx
@@ -328,25 +334,84 @@ continue:	cmp ah,1ch
 
 checkgamemode:  cmp dh,0fh
       			jz normalmode
+				cmp dh,10h
+				jz advancemode
+				cmp dh,11h
+				jz chatting
 				
 				cmp dh,12h					
 				jz Exit
 				jnz again
-
+				
 
 Exit:           exitGame					
 
 normalmode:
-		
+mov al,0
+mov level,al
 loadmap
+jmp here
 
+advancemode:
+mov al,1
+mov level,al
+loadmap
+jmp here
 
+chatting:
+mov ah,2
+loadchatting
+jmp here
+
+here:
 pop bx
 pop cx
 pop dx
 pop ax
 
 Endm loadinterface
+
+
+
+
+
+loadchatting macro
+
+	mov ah,0
+	mov al,3
+	int 10h
+	mov ah,2
+	mov dx,0
+	int 10h
+	mov dx,offset player1Name
+	mov ah, 9
+	int 21h
+
+	mov ah,2
+	mov dh,13
+	mov dl,0
+	int 10h
+	mov dx,offset player2Name
+	mov ah, 9
+	int 21h
+
+
+	mov dh,12
+	mov dl,0
+	mov ah,2
+	int 10h
+	mov ah,9 ;Display
+	mov bh,0 ;Page 0
+	mov al,45 ;Letter D
+	mov cx,79 ;5 times
+	mov bl,00Fh ;Green (A) on white(F) background
+	int 10h
+
+		
+
+	
+
+ENDM loadchatting
       
 
 
@@ -405,45 +470,46 @@ cont:	        notify emptyStatus
 				mov bl,0					
 				mov dx,0c1Eh
 				int 10h
+
+;				mov ah,9
+;				mov dx , offset msg2
+;				int 21h
+;
+;b2:				mov ah,2
+;				mov bl,0					
+;				mov dx,0d1Eh
+;				int 10h
+;
+;				readInput user2
+;                cmp player2Name,65d
+;				jb  fx2
+;                cmp player2Name,122d
+;                ja fx2
+;                cmp player2Name,90d	
+;                ja  chk2
+;                jmp E
+;                
+;chk2:         cmp player2Name,97d
+;                jb  fx2
+;                jmp E
+; 
+;                
+;fx2:            notify firstLetter
+;                mov ah,2
+;				mov bl,0
+;				mov dx,0d1Eh
+;				int 10h
+;                mov ah,9
+;				mov dx ,offset spaces
+;				int 21h
+;                jmp b2
+
+
+
+
 				 
-				mov ah,9
-				mov dx , offset msg2
-				int 21h
 
-b2:				mov ah,2
-				mov bl,0					
-				mov dx,0d1Eh
-				int 10h
-
-				readInput user2
-                cmp player2Name,65d
-				jb  fx2
-                cmp player2Name,122d
-                ja fx2
-                cmp player2Name,90d	
-                ja  chk2
-                jmp E
-                
-chk2:         cmp player2Name,97d
-                jb  fx2
-                jmp E
- 
-                
-fx2:            notify firstLetter
-                mov ah,2
-				mov bl,0
-				mov dx,0d1Eh
-				int 10h
-                mov ah,9
-				mov dx ,offset spaces
-				int 21h
-                jmp b2
                                                       
  
- E:
- 
-			 mov ch, 32
-			 mov ah, 1
-			 int 10h 
 
 Endm WriteNames

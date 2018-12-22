@@ -8,7 +8,6 @@ include Bullet.inc
 .model small
 .386
 .stack 64
-
 .data
 player1 label byte
 player1x db 21
@@ -37,6 +36,8 @@ generalPlayer label byte
 posx  db  ?        ;Positon x of general player
 posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
+ 
+random db 23 dup('$')
 
 conf  db 16,17,30,31
 chngx db 01,-1,00,00
@@ -64,8 +65,8 @@ Startinterface   db    '      _________       _______        _              _   
                  db    '                                                                                $'
                  db    '                                                                                $' 
                  db    '                             ',16,' Normal Mode                                      $'
-                 db    '                               Advanced Mode (Coming Soon)                      $'
-                 db    '                               Chatting Mode<Coming Soon>                       $'
+                 db    '                               Advanced Mode                                    $'
+                 db    '                               Chatting Mode                                    $'
                  db    '                               Exit                                             $'
                  db    '                                                                                $'
                  db    '                                                                                $' 
@@ -73,7 +74,7 @@ Startinterface   db    '      _________       _______        _              _   
                  db    '                                                                                $'
                  db    '                                                                                $'
 
-map             db     '                 ³Ú²²                                                           '
+map1            db     '                 ³Ú²²                                                           '
                 db     '                 ³Ú²²                ²²     ²²²²²²²²            ²²²²²²²² ²  ²²  '
                 db     '                 ³²²²          ²²²         ²²²²²²²²²²   ²²²²²²  ²²²²²²²² ²    ²²'      
                 db     '                 ³²²²   ²²²²  ²² ²        ²²²²²²²²²²²²  ²²²²²²  ²²       ²      '
@@ -97,18 +98,50 @@ map             db     '                 ³Ú²²                                   
                 db     '                 ³ ²²   ² ² ²² ²         ²²²²²²²²²²²²²²                      ²²²'
                 db     '                 ³                                                           ²²Ù'    
                 db     '                 ³²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²² ²²Ù$'
+                
+                
+                
+                
+map2            db     '                 ³Ú²²                                                           '
+                db     '                 ³Ú²²   *            ²²     ²²²²²²²²            ²²²²²²²² ²  ²²  '
+                db     '                 ³²²²       *  ²²²         ²²²²*²²²²²   ²²²²²²  ²²²*²²²² ²    *²'      
+                db     '                 ³*²²   ²²²²  ²² ²        ²²²²²²²²²²²²  ²²²²²²  ²²       ²      '
+                db     '                 ³     *         ²²  *   ²²²²²²²²*²²²²² ²²*²²²    ²²²    ²   *² '
+                db     '                 ³   ²²   *²² ²² *²     ²²²*²²²²²²²²²²² ²²²²²²    *²² *  ²      ' 
+                db     '                 ³        ²²² ²² ²²     ²²²²²²²²²²**²²² ²²²²²²       ²²² *  ²²  '
+                db     '                 ³ ²²²²   *²²    ²   ²² ²²²²*²²²²²²²²²²              ²          '
+                db     '                 ³   ²           ²      ²²²  ²²*²  ²²²²    *    ²²²*²²     ²²   '
+                db     '                 ³  ²    * ²²²²²*   ²²  ²²   ²²²²   ²²²            ²²²²    ²²   '
+                db     'ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³²²   ²²²²        *    ²    ²²*²    ²²            ²²²²  ²²     '
+                db     '                 ³²²²²²²²²  ²   ²²      ²²²²²²²²²²²²²²² ²²²*²²     *²²²  ²*     '
+                db     '                 ³²²  ²²²       ²   ²   ²²²²*²²²²²²²²²²         ²²²²²²²² ²      '
+                db     '                 ³ ²     ²²*²²²           ²²²²²²²²²²²           ²²²*²²²²²²  ²²  '
+                db     '                 ³ ²²    ²²²²*²²          ²*²²²²²²*²²    *   ²²²²          ²²   '
+                db     '                 ³ ²*    ²²²²²²²²    ²²   ²²²²²*²²²²²       *²     ²²   ²²      '
+                db     '                 ³  ²            ²²    ²² ²²²²²²²²²²*      ²²²²        ²²  *    '
+                db     '                 ³   ²²  *    ²   ²²      ² ² ² ² ² ²      ²²*  ²²    ²²        '
+                db     '                 ³    ²²²  ²   ²    *²    ² ² ² ² ² ²     ²²    ²²   ²²    *    '
+                db     '                 ³    ²  ²² ²  ²²  * ²²²²  ² ² ² ² ²    ²²   ²²    ²²           ' 
+                db     '                 ³   ²          ²      ²²              ²²    ²²        *     ²²²'
+                db     '                 ³ ²*   ² ² ²² ²         ²²*²²²²²²²²²²²      *   *           *²²'
+                db     '                 ³           *                                               ²²Ù'    
+                db     '                 ³²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²² ²²Ù$'                
+                
+              
+                
 temp db 0
 lives1 db 3 
 lives2 db 3
- Sartcheckx dw ?
- Sartchecky dw ?
- Edcheckx dw ?
- Edchecky dw ?
- Cnterx dw ?
- Cntery dw ?
- Rquare dw ?
- color db ?
- won db " won ","$"
+Sartcheckx dw ?
+Sartchecky dw ?
+Edcheckx dw ?
+Edchecky dw ?
+Cnterx dw ?
+Cntery dw ?
+Rquare dw ?
+color db ?
+level db ?
+won db " won ","$"
 
 .code
 main proc far
@@ -124,6 +157,7 @@ thebegining:
     mov ch, 32
     mov ah, 1
     int 10h
+   
     loadinterface
     mov pnum, 1
     mov si, offset player1
@@ -135,7 +169,7 @@ thebegining:
     draw
     ; add your code here
     mov bp, 10000
-    game:
+    game: 
     mainGameLoop
     jmp game
 
@@ -144,4 +178,6 @@ thebegining:
     int 21h
 main endp
 
-end main ; set entry point and stop the assembler.
+end main ; set entry point and stop the assembler.        
+
+
