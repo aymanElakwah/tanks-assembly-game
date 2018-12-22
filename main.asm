@@ -39,6 +39,8 @@ ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down 
  
 random db 23 dup('$')
 
+random db 23 dup('$')
+
 conf  db 16,17,30,31
 chngx db 01,-1,00,00
 chngy db 00,00,-1,01
@@ -129,6 +131,7 @@ map2            db     '                 ³Ú²²                                   
                 
               
                 
+
 temp db 0
 lives1 db 3 
 lives2 db 3
@@ -177,7 +180,5 @@ thebegining:
     mov ax, 4c00h ; exit to operating system.
     int 21h
 main endp
-
-end main ; set entry point and stop the assembler.        
-
+end main ; set entry point and stop the assembler.
 
