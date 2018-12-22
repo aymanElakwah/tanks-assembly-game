@@ -407,7 +407,7 @@ loadchatting macro
 	mov bl,00Fh ;Green (A) on white(F) background
 	int 10h
 	
-	cmp playerNumber,0
+	cmp playerNumber,1
 	jz ply1
 	mov	sendx,0
 	mov	sendy,13
