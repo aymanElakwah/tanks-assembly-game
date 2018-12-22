@@ -5,10 +5,13 @@ include input.inc
 include init.inc
 include Macros.inc
 include Bullet.inc
+include exchange.inc
 .model small
 .386
 .stack 64
 .data
+tmp db ?
+waiting db 'Waiting for player 2$'
 player1 label byte
 player1x db 21
 player1y db 0
@@ -36,10 +39,6 @@ generalPlayer label byte
 posx  db  ?        ;Positon x of general player
 posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
- 
-random db 23 dup('$')
-
-random db 23 dup('$')
 
 conf  db 16,17,30,31
 chngx db 01,-1,00,00
@@ -151,6 +150,7 @@ main proc far
 ; set segment registers:
     mov ax, @data
     mov ds, ax
+    mov es, ax
     WriteNames
 thebegining:
     initialize

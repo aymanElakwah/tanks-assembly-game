@@ -38,3 +38,17 @@ receive macro VALUE
   	mov VALUE , al
   	mend:
 endm receive
+
+blockReceive macro VALUE
+    local check
+    mov dx , 3FDH		; Line Status Register
+    check:
+    in al , dx
+    AND al , 1
+    mov ah, 1
+    jz check
+    ;If Ready read the VALUE in Receive data register
+    mov dx , 03F8H
+    in al , dx
+    mov VALUE , al
+endm receive
