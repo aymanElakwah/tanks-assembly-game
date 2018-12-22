@@ -36,10 +36,12 @@ generalPlayer label byte
 posx  db  ?        ;Positon x of general player
 posy db  ?        ;Positon y of general player
 ori  db  ?          ;Orintation of player: Right = 16, Left = 17, Up = 30, Down = 31
- 
-random db 23 dup('$')
 
-random db 23 dup('$')
+sendx db ?
+sendy db ?
+recx db ?
+recy db ? 
+tmp db ?
 
 conf  db 16,17,30,31
 chngx db 01,-1,00,00
