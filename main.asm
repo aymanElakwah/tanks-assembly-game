@@ -51,7 +51,16 @@ chngy db 00,00,-1,01
 
 blt1 db 3 dup(0ffh, ?, ?)
 blt2 db 3 dup(0FFh, ?, ?)
-Msg1  db 'Please Enter Your Name: $'
+Msg1  db 'Please Enter Your Name: $' 
+          
+Noti11 db 'You Sent A Normal Game Invitaion to $'   
+Noti12 db 'You Sent An Advanced Game Invitaion to $'
+Noti13 db 'You Sent A Chat Invitaion to $'  
+Noti21 db ' Sent You A Normal Game Invitaion, To Accept Press F2$'
+Noti22 db ' Sent You An Advanced Game Invitaion, To Accept Press F2$' 
+Noti23 db ' Sent You A Chat Invitaion, To Accept Press F2$'
+recInv db 5
+
 ;Msg2  db 'USER2: Please Enter Your Name: $'
 spaces   db '                $'
 

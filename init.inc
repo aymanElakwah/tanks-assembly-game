@@ -13,6 +13,7 @@ mov blt1,0ffh
     mov player2x,76
     mov player2y,22  
     mov player2ori,17
+	mov recInv,5
 	cmp playerNumber,1
 	jz ply1
 	mov	sendx,0

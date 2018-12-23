@@ -224,7 +224,7 @@ ENDM UpadateHearts
 ;---------------------------------------------------------------------------------------------------------------
 
 loadinterface Macro							;if pos(dh)=11h->normalmode , if pos(dl)==12H->network mode ; 13h==chatting mode ;  14==Exit
-local normalmode,again,check1,check2,continue,makedelay1,makedelay2,wholelogo,draw,Exit,advancemode,here,chatting
+local normalmode,again,check1,check2,continue,makedelay1,makedelay2,wholelogo,draw,Exit,advancemode,here,chatting,L1,L11,L2,L22,L3,L33
 push ax
 push dx
 push cx
@@ -268,7 +268,8 @@ makedelay2:
 					mov ch, 32
 					mov ah, 1
 					int 10h 
-again:				mov ah,1
+again:				recieveInvite
+					mov ah,1
 					int 16h
 					jz	again				;if no input
 					mov ah,0
@@ -277,7 +278,18 @@ again:				mov ah,1
 					jz check1				;check if he can go up or no
 					cmp ah,50h
 					jz check2				;check if he can go down or no
+					cmp recInv, 5
+					jz continue
+					cmp ah, 3Ch				;if have an invitation and pressed f2
 					jnz continue
+					send 254
+					cmp recInv,0
+					jz S1
+					cmp recInv,1
+					jz S2
+					cmp recInv,2
+					jz S3
+					jmp continue
 
 check1:				dec dh
 					cmp dh,0fh																
@@ -327,11 +339,10 @@ Draw: push dx
 	  jmp continue
 
 
-continue:	cmp ah,1ch
+continue:	
+			cmp ah,1ch
 			jz checkgamemode
 			jnz again
-
-
 checkgamemode:  cmp dh,0fh
       			jz normalmode
 				cmp dh,10h
@@ -346,20 +357,112 @@ checkgamemode:  cmp dh,0fh
 
 Exit:           exitGame					
 
-normalmode:
+normalmode:				
+mov cx, offset Noti11
+writeInvitaion cx, 23
+send 0
+L1:
+cmp recInv,5
+jz L11
+mov ah,1
+int 16h
+jz	L11				;if no input
+mov ah,0
+int 16h
+cmp ah, 3Ch				;if have an invitation and pressed f2
+jnz L11
+send 254
+cmp recInv,0
+jz S1
+cmp recInv,1
+jz S2
+cmp recInv,2
+jz S3
+L11:
+mov dx , 3FDH		; Line Status Register
+in al , dx 
+AND al , 1
+JZ L1
+mov dx , 03F8H
+in al , dx
+setInvitation al
+cmp al,254
+jnz L1
+S1:
 mov al,0
 mov level,al
 loadmap
 jmp here
 
 advancemode:
+mov cx, offset Noti12
+writeInvitaion cx, 23
+send 1
+L2:
+cmp recInv,5
+jz L22
+mov ah,1
+int 16h
+jz	L22				;if no input
+mov ah,0
+int 16h
+cmp ah, 3Ch				;if have an invitation and pressed f2
+jnz L22
+send 254
+cmp recInv,0
+jz S1
+cmp recInv,1
+jz S2
+cmp recInv,2
+jz S3
+L22:
+mov dx , 3FDH		; Line Status Register
+in al , dx 
+AND al , 1
+JZ L2
+mov dx , 03F8H
+in al , dx
+setInvitation al
+cmp al,254
+jnz L2
+S2:
 mov al,1
 mov level,al
 loadmap
 jmp here
 
 chatting:
-mov ah,2
+mov cx, offset Noti13 
+writeInvitaion cx, 23
+send 2
+L3:
+cmp recInv,5
+jz L33
+mov ah,1
+int 16h
+jz	L33				;if no input
+mov ah,0
+int 16h
+cmp ah, 3Ch				;if have an invitation and pressed f2
+jnz L33
+send 254			;accepted your invitation and let's start the game
+cmp recInv,0
+jz S1
+cmp recInv,1
+jz S2
+cmp recInv,2
+jz S3
+L33:
+mov dx , 3FDH		; Line Status Register
+in al , dx 
+AND al , 1
+JZ L3
+mov dx , 03F8H
+in al , dx
+setInvitation al
+cmp al,254
+jnz L3
+S3:
 loadchatting
 jmp here
 
@@ -368,11 +471,119 @@ pop bx
 pop cx
 pop dx
 pop ax
+Endm loadinterface 
 
-Endm loadinterface
+setInvitation MACRO num
+local L1,L2,L3,E
+cmp num,0
+jz L1
+cmp num,1
+jz L2
+cmp num,2
+jz L3
+jmp E
+L1:
+mov cx, offset Noti21
+writeRecInvitaion cx, 24
+mov recInv, 0
+jmp E
 
+L2:
+mov cx, offset Noti22
+writeRecInvitaion cx, 24
+mov recInv, 1
+jmp E
 
+L3:
+mov cx, offset Noti23
+writeRecInvitaion cx, 24
+mov recInv, 2
+E:
+ENDM setInvitation
 
+writeInvitaion MACRO typeOffset, y
+	mov ah,2		;writing invitation in status bar
+	mov dl,0
+	mov dh,y
+	int 10h
+	mov ah, 9
+	mov dx, typeOffset
+	int 21h
+	mov ah, 9
+	otherPlayerName
+	int 21h			;end writing invitation
+ENDM writeInvitaion
+
+recieveInvite MACRO		;check if there is an invite sent by the other user and prints it in my window, setting the value of recInv by the game type
+	local R1,R2,R3,E
+	push ax
+	push dx
+	mov dx , 3FDH		; Line Status Register
+    in al , dx 
+    AND al , 1
+    JZ E
+	mov dx , 03F8H
+  	in al , dx 
+	cmp al,0
+	jz R1
+	cmp al,1
+	jz R2
+	cmp al,2
+	jz R3
+	jmp E
+	R1:
+	mov cx, offset Noti21
+	writeRecInvitaion cx, 24
+	mov recInv, 0
+	jmp E
+
+	R2:
+	mov cx, offset Noti22
+	writeRecInvitaion cx, 24
+	mov recInv, 1
+	jmp E
+
+	R3:
+	mov cx, offset Noti23
+	writeRecInvitaion cx, 24
+	mov recInv, 2
+	E:
+	pop dx
+	mov ah,2
+	int 10h
+	pop ax
+ENDM recieveInvite
+writeRecInvitaion MACRO typeOffset, y
+	mov ah,2		;writing invitation in status bar
+	mov dl,0
+	mov dh,y
+	int 10h
+	mov ah, 9
+	otherPlayerName
+	int 21h
+	mov ah, 9
+	mov dx, typeOffset
+	int 21h			;end writing invitation
+ENDM writeRecInvitaion
+	
+otherPlayerName MACRO			;choose the right name to write in the notifications bar for the other playaer
+	local plr1, E
+	mov al,playerNumber
+	cmp al,1
+	jz plr1
+	mov dx,offset player2Name
+	jmp E
+	plr1:
+	mov dx,offset player1Name
+	E:
+ENDM rightName
+
+;waitForAccept MACRO type
+;	mov al,type
+;	mov tmp,al
+;	send tmp
+;	receive tmp
+;	cmp tmp,
 
 
 loadchatting macro
@@ -388,7 +599,7 @@ loadchatting macro
 	int 21h
 
 	mov ah,2
-	mov dh,13
+	mov dh,12
 	mov dl,0
 	int 10h
 	mov dx,offset player2Name
