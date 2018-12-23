@@ -531,6 +531,8 @@ cont:	        notify emptyStatus
 				mov bl,0					
 				mov dx,0c1Eh
 				int 10h
+				areYouReady
+				exchangeNames
 
 ;				mov ah,9
 ;				mov dx , offset msg2
