@@ -26,7 +26,7 @@ pausedStatus db 'The game is paused$'
 emptyStatus db 78 dup (' '), '$'
 firstLetter db 'The first letter of the name should be a letter$'
 
-playerNumber db 1 ; The number of player on this device
+playerNumber db 0 ; The number of player on this device
 key1 db ? ;player 1 key
 isDir1 db ? ; is key 1 a direction key?
 key2 db ? ;player 2 key                
